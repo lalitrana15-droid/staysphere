@@ -1,0 +1,30 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 200.141.2.70 >> ~/.ssh/known_hosts
+
+      - name: Sync files to VPS
+        run: |
+          rsync -az --delete \
+            --exclude node_modules \
+            --exclude .next \
+            --exclude .git \
+            ./ root@200.141.2.70:/var/www/staysphere.imagesque.com/
+
+      - name: Build and restart
+        run: |
+          ssh root@200.141.2.70 "cd /var/www/staysphere.imagesque.com && npm install --production=false && npm run build && pm2 restart staysphere --update-env"

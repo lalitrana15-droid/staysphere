@@ -262,6 +262,22 @@ export function AgentDashboard({
                 Share with clients — every booking through this link earns you <strong className="text-gold-600">10% commission</strong>. Attribution lasts 30 days.
               </p>
             </div>
+
+            {/* KYC link */}
+            <div className="bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 p-6">
+              <p className="text-[10px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 mb-4 flex items-center gap-2">
+                <ShieldCheck className="w-3.5 h-3.5" /> Get KYC of Your Client
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 px-4 py-3 font-mono text-xs text-charcoal/70 dark:text-ivory/70 overflow-hidden text-ellipsis whitespace-nowrap">
+                  {kycBaseUrl}
+                </div>
+                <CopyBtn text={kycBaseUrl} />
+              </div>
+              <p className="text-xs font-sans text-charcoal/40 mt-3">
+                Send this link to your guest before check-in — they upload their ID and it appears in your <button onClick={() => setTab("kyc")} className="text-gold-600 hover:underline">KYC tab</button>.
+              </p>
+            </div>
           </div>
         )}
 
