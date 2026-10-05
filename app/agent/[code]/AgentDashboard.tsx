@@ -273,9 +273,15 @@ export function AgentDashboard({
                   {kycBaseUrl}
                 </div>
                 <CopyBtn text={kycBaseUrl} />
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(`Please complete your KYC verification before check-in:\n${kycBaseUrl}\n\nThis is required for your stay.`)}`}
+                  target="_blank"
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-sans font-medium uppercase tracking-wide transition-colors whitespace-nowrap">
+                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+                </a>
               </div>
               <p className="text-xs font-sans text-charcoal/40 mt-3">
-                Send this link to your guest before check-in — they upload their ID and it appears in your <button onClick={() => setTab("kyc")} className="text-gold-600 hover:underline">KYC tab</button>.
+                Copy link ya WhatsApp se seedha guest ko bhejo — woh ID upload karenge aur <button onClick={() => setTab("kyc")} className="text-gold-600 hover:underline">KYC tab</button> mein dikh jayega.
               </p>
             </div>
           </div>
