@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, Check, X, ShieldCheck, Clock, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Eye, Check, X, ShieldCheck, Clock, AlertCircle, ChevronDown, ChevronUp, FileText, ExternalLink } from "lucide-react";
 
 type KycRecord = Record<string, string>;
 
@@ -17,6 +17,18 @@ const StatusIcon = ({ status }: { status: string }) => {
   return <Clock className="w-3.5 h-3.5" />;
 };
 
+function isPdf(src: string) {
+  return src?.startsWith("data:application/pdf");
+}
+
+function openInNewTab(dataUrl: string) {
+  const blob = dataUrl.startsWith("data:application/pdf")
+    ? new Blob([Uint8Array.from(atob(dataUrl.split(",")[1]), c => c.charCodeAt(0))], { type: "application/pdf" })
+    : null;
+  const url = blob ? URL.createObjectURL(blob) : dataUrl;
+  window.open(url, "_blank");
+}
+
 function IDImageModal({ src, onClose }: { src: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={onClose}>
@@ -24,8 +36,12 @@ function IDImageModal({ src, onClose }: { src: string; onClose: () => void }) {
         <button onClick={onClose} className="absolute -top-10 right-0 text-white/80 hover:text-white flex items-center gap-1.5 text-sm font-sans">
           <X className="w-4 h-4" /> Close
         </button>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="ID Document" className="w-full max-h-[80vh] object-contain bg-stone-900" />
+        {isPdf(src) ? (
+          <embed src={src} type="application/pdf" className="w-full h-[80vh] bg-stone-900" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={src} alt="ID Document" className="w-full max-h-[80vh] object-contain bg-stone-900" />
+        )}
       </div>
     </div>
   );
@@ -131,13 +147,22 @@ export function KycAdminClient({ initialRecords }: { initialRecords: KycRecord[]
                       {rec.id_front ? (
                         <div>
                           <p className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 mb-2">ID Front</p>
-                          <div className="relative group cursor-pointer" onClick={() => setPreviewImg(rec.id_front)}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={rec.id_front} alt="ID Front" className="w-full h-32 object-cover border border-stone-200 dark:border-stone-800" />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                              <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                          {isPdf(rec.id_front) ? (
+                            <div className="flex flex-col items-center justify-center h-32 border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 gap-2 cursor-pointer group" onClick={() => openInNewTab(rec.id_front)}>
+                              <FileText className="w-8 h-8 text-charcoal/30 group-hover:text-gold-500 transition-colors" />
+                              <span className="text-xs font-sans text-charcoal/40 group-hover:text-charcoal transition-colors flex items-center gap-1">
+                                <ExternalLink className="w-3 h-3" /> PDF kholen
+                              </span>
                             </div>
-                          </div>
+                          ) : (
+                            <div className="relative group cursor-pointer" onClick={() => setPreviewImg(rec.id_front)}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={rec.id_front} alt="ID Front" className="w-full h-32 object-cover border border-stone-200 dark:border-stone-800" />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center justify-center h-32 border border-dashed border-stone-200 dark:border-stone-800">
@@ -150,13 +175,22 @@ export function KycAdminClient({ initialRecords }: { initialRecords: KycRecord[]
                       {rec.id_back ? (
                         <div>
                           <p className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 mb-2">ID Back</p>
-                          <div className="relative group cursor-pointer" onClick={() => setPreviewImg(rec.id_back)}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={rec.id_back} alt="ID Back" className="w-full h-32 object-cover border border-stone-200 dark:border-stone-800" />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                              <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                          {isPdf(rec.id_back) ? (
+                            <div className="flex flex-col items-center justify-center h-32 border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 gap-2 cursor-pointer group" onClick={() => openInNewTab(rec.id_back)}>
+                              <FileText className="w-8 h-8 text-charcoal/30 group-hover:text-gold-500 transition-colors" />
+                              <span className="text-xs font-sans text-charcoal/40 group-hover:text-charcoal transition-colors flex items-center gap-1">
+                                <ExternalLink className="w-3 h-3" /> PDF kholen
+                              </span>
                             </div>
-                          </div>
+                          ) : (
+                            <div className="relative group cursor-pointer" onClick={() => setPreviewImg(rec.id_back)}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={rec.id_back} alt="ID Back" className="w-full h-32 object-cover border border-stone-200 dark:border-stone-800" />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center justify-center h-32 border border-dashed border-stone-200 dark:border-stone-800">
