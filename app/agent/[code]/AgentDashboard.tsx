@@ -48,6 +48,79 @@ function CopyBtn({ text }: { text: string }) {
   );
 }
 
+function KycLinkGenerator({ kycBaseUrl, onKycTab }: { kycBaseUrl: string; onKycTab: () => void }) {
+  const [selectedProperty, setSelectedProperty] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const propertyOptions = properties.map(p => ({ value: p.title, label: `${p.title} — ${p.city}` }));
+
+  const kycLink = selectedProperty
+    ? `${kycBaseUrl}&property=${encodeURIComponent(selectedProperty)}`
+    : kycBaseUrl;
+
+  const waText = selectedProperty
+    ? `Please complete your KYC verification before check-in at *${selectedProperty}*:\n${kycLink}\n\nThis is required for your stay.`
+    : `Please complete your KYC verification before check-in:\n${kycLink}\n\nThis is required for your stay.`;
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(kycLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 p-6">
+      <p className="text-[10px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 mb-4 flex items-center gap-2">
+        <ShieldCheck className="w-3.5 h-3.5" /> Get KYC of Your Client
+      </p>
+
+      {/* Step 1: Select property */}
+      <div className="mb-3">
+        <label className="text-[10px] font-sans font-medium tracking-[0.12em] uppercase text-charcoal/40 dark:text-ivory/40 block mb-1.5">
+          Step 1 — Property chunein (optional)
+        </label>
+        <select
+          value={selectedProperty}
+          onChange={e => { setSelectedProperty(e.target.value); setCopied(false); }}
+          className="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 px-3 py-2.5 text-xs font-sans text-charcoal dark:text-ivory focus:outline-none focus:border-gold-400">
+          <option value="">— Property select karo (ya generic link bhejo) —</option>
+          {propertyOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Step 2: Generated link + actions */}
+      <div className="mb-3">
+        <label className="text-[10px] font-sans font-medium tracking-[0.12em] uppercase text-charcoal/40 dark:text-ivory/40 block mb-1.5">
+          Step 2 — Yeh link customer ko bhejo
+        </label>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 px-3 py-2.5 font-mono text-[11px] text-charcoal/60 dark:text-ivory/60 overflow-hidden text-ellipsis whitespace-nowrap">
+            {kycLink}
+          </div>
+          <button onClick={copyLink}
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-gold-500 hover:bg-gold-600 text-white text-xs font-sans font-medium uppercase tracking-wide transition-colors whitespace-nowrap">
+            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? "Copied!" : "Copy"}
+          </button>
+          <a href={`https://wa.me/?text=${encodeURIComponent(waText)}`} target="_blank"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-sans font-medium uppercase tracking-wide transition-colors whitespace-nowrap">
+            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <p className="text-xs font-sans text-charcoal/40">
+        {selectedProperty
+          ? `Customer ke form mein "${selectedProperty}" already filled hoga — unhe choose nahi karna padega.`
+          : "Property select karne par link pre-filled hoga. Ya seedha generic link share kar sakte ho."}{" "}
+        Submissions <button onClick={onKycTab} className="text-gold-600 hover:underline">KYC tab</button> mein dikhenge.
+      </p>
+    </div>
+  );
+}
+
 export function AgentDashboard({
   code, agent, leads: initialLeads, referralLink, kycBaseUrl, kycRecords: initialKycRecords,
 }: {
@@ -263,27 +336,8 @@ export function AgentDashboard({
               </p>
             </div>
 
-            {/* KYC link */}
-            <div className="bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 p-6">
-              <p className="text-[10px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 mb-4 flex items-center gap-2">
-                <ShieldCheck className="w-3.5 h-3.5" /> Get KYC of Your Client
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 px-4 py-3 font-mono text-xs text-charcoal/70 dark:text-ivory/70 overflow-hidden text-ellipsis whitespace-nowrap">
-                  {kycBaseUrl}
-                </div>
-                <CopyBtn text={kycBaseUrl} />
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(`Please complete your KYC verification before check-in:\n${kycBaseUrl}\n\nThis is required for your stay.`)}`}
-                  target="_blank"
-                  className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-sans font-medium uppercase tracking-wide transition-colors whitespace-nowrap">
-                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
-                </a>
-              </div>
-              <p className="text-xs font-sans text-charcoal/40 mt-3">
-                Copy link ya WhatsApp se seedha guest ko bhejo — woh ID upload karenge aur <button onClick={() => setTab("kyc")} className="text-gold-600 hover:underline">KYC tab</button> mein dikh jayega.
-              </p>
-            </div>
+            {/* KYC link with property selector */}
+            <KycLinkGenerator kycBaseUrl={kycBaseUrl} onKycTab={() => setTab("kyc")} />
           </div>
         )}
 

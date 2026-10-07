@@ -87,11 +87,12 @@ export function KycForm() {
   const searchParams = useSearchParams();
   const refCode = searchParams.get("ref") || "";
   const customerId = searchParams.get("customer") || "";
+  const prefilledProperty = searchParams.get("property") || "";
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [propertyName, setPropertyName] = useState("");
+  const [propertyName, setPropertyName] = useState(prefilledProperty);
   const [checkinDate, setCheckinDate] = useState("");
   const [checkoutDate, setCheckoutDate] = useState("");
   const [idType, setIdType] = useState("");
@@ -216,9 +217,17 @@ export function KycForm() {
         <p className="text-[10px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 mb-4">Stay Details</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-3">
-            <label className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/50 dark:text-ivory/50 block mb-1.5">Property / Villa Name</label>
-            <input value={propertyName} onChange={e => setPropertyName(e.target.value)} placeholder="e.g. Mandovar Mountain Valley Retreat"
-              className="input-luxury text-sm w-full" />
+            <label className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/50 dark:text-ivory/50 block mb-1.5">
+              Property / Villa Name
+              {prefilledProperty && <span className="ml-2 text-emerald-600 normal-case tracking-normal">✓ Pre-filled by your agent</span>}
+            </label>
+            <input
+              value={propertyName}
+              onChange={e => !prefilledProperty && setPropertyName(e.target.value)}
+              readOnly={!!prefilledProperty}
+              placeholder="e.g. Mandovar Mountain Valley Retreat"
+              className={`input-luxury text-sm w-full ${prefilledProperty ? "bg-stone-100 dark:bg-stone-800 text-charcoal/70 dark:text-ivory/70 cursor-not-allowed" : ""}`}
+            />
           </div>
           <div>
             <label className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/50 dark:text-ivory/50 block mb-1.5">Check-in Date</label>
