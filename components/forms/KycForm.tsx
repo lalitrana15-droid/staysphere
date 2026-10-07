@@ -2,9 +2,10 @@
 
 import { useState, useRef, ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
-import { Upload, Check, AlertCircle, ShieldCheck, X } from "lucide-react";
+import { Upload, Check, AlertCircle, ShieldCheck, X, FileText } from "lucide-react";
 
 const ID_TYPES = ["Aadhaar Card", "PAN Card", "Passport", "Driver's License", "Voter ID"];
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 type Field = { label: string; value: string; setter: (v: string) => void; type?: string; required?: boolean; placeholder?: string };
 
@@ -20,25 +21,48 @@ function fileToBase64(file: File): Promise<string> {
 function IDUploadBox({ label, value, onChange }: { label: string; value: string; onChange: (b64: string) => void }) {
   const ref = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
+  const [sizeError, setSizeError] = useState<string>("");
 
   const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      setSizeError(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed size is 2 MB.`);
+      if (ref.current) ref.current.value = "";
+      return;
+    }
+    setSizeError("");
     const b64 = await fileToBase64(file);
     setPreview(b64);
+    setFileName(file.name);
     onChange(b64);
   };
 
-  const clear = () => { setPreview(""); onChange(""); if (ref.current) ref.current.value = ""; };
+  const clear = () => { setPreview(""); setFileName(""); setSizeError(""); onChange(""); if (ref.current) ref.current.value = ""; };
+  const isPdf = preview.startsWith("data:application/pdf");
 
   return (
     <div>
       <p className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/50 dark:text-ivory/50 mb-2">{label}</p>
+      {sizeError && (
+        <div className="flex items-start gap-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 px-3 py-2 mb-2">
+          <AlertCircle className="w-3.5 h-3.5 text-red-500 mt-0.5 flex-shrink-0" />
+          <p className="text-[11px] font-sans text-red-600 dark:text-red-400">{sizeError}</p>
+        </div>
+      )}
       {preview ? (
         <div className="relative border border-gold-500/30 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt={label} className="w-full h-36 object-cover" />
-          <button onClick={clear} className="absolute top-2 right-2 w-7 h-7 bg-black/60 flex items-center justify-center text-white hover:bg-black transition-colors">
+          {isPdf ? (
+            <div className="w-full h-36 bg-stone-50 dark:bg-stone-900 flex flex-col items-center justify-center gap-2">
+              <FileText className="w-8 h-8 text-gold-500" />
+              <span className="text-xs font-sans text-charcoal/60 dark:text-ivory/60 text-center px-2 truncate max-w-full">{fileName}</span>
+            </div>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={preview} alt={label} className="w-full h-36 object-cover" />
+          )}
+          <button type="button" onClick={clear} className="absolute top-2 right-2 w-7 h-7 bg-black/60 flex items-center justify-center text-white hover:bg-black transition-colors">
             <X className="w-3.5 h-3.5" />
           </button>
           <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-emerald-500 px-2 py-1">
@@ -51,10 +75,10 @@ function IDUploadBox({ label, value, onChange }: { label: string; value: string;
           className="w-full h-28 border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center gap-2 hover:border-gold-400 hover:bg-gold-50/30 transition-all group">
           <Upload className="w-5 h-5 text-charcoal/30 group-hover:text-gold-500 transition-colors" />
           <span className="text-xs font-sans text-charcoal/40 group-hover:text-charcoal/60">Click to upload</span>
-          <span className="text-[10px] font-sans text-charcoal/30">JPG, PNG, PDF · max 5MB</span>
+          <span className="text-[10px] font-sans text-charcoal/30">JPG · PNG · PDF · max 2 MB</span>
         </button>
       )}
-      <input ref={ref} type="file" accept="image/*,application/pdf" onChange={handleFile} className="hidden" />
+      <input ref={ref} type="file" accept="image/jpeg,image/png,image/jpg,application/pdf" onChange={handleFile} className="hidden" />
     </div>
   );
 }
@@ -228,6 +252,17 @@ export function KycForm() {
             </label>
             <input value={idNumber} onChange={e => setIdNumber(e.target.value)} required placeholder="e.g. XXXX XXXX XXXX"
               className="input-luxury text-sm w-full" />
+          </div>
+        </div>
+
+        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 px-4 py-3 mb-4 flex items-start gap-2.5">
+          <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-[11px] font-sans font-medium text-amber-700 dark:text-amber-400 mb-0.5">ID Upload Guidelines</p>
+            <p className="text-[11px] font-sans text-amber-600/80 dark:text-amber-500/80 leading-relaxed">
+              Accepted formats: <span className="font-medium">JPG, PNG, PDF</span> only · Maximum file size: <span className="font-medium">2 MB per file</span><br />
+              Please upload a clear, readable photo or scan of your government-issued ID.
+            </p>
           </div>
         </div>
 
