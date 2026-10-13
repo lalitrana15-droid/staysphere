@@ -774,7 +774,7 @@ export const elivaasProperties: Property[] = raw.map(
     }
 
     return {
-      id: `${conf.slug}-eli-${String(idx).padStart(3, "0")}`,
+      id: `${ck}-eli-${String(idx).padStart(3, "0")}`,
       slug: mkSlug(name, conf.slug, idx),
       code: `SC-${ck.toUpperCase()}-${String(idx).padStart(3, "0")}`,
       title,

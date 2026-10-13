@@ -7,9 +7,11 @@ import Image from "next/image";
 import { BedDouble, Bath, Users, Search } from "lucide-react";
 import { properties } from "@/data/properties";
 
-// Build unique destination list from actual property data
+// Build unique destination list — key by city to keep North Goa & South Goa separate
 const allDestinations = Array.from(
-  new Map(properties.map((p) => [p.destination_slug, { slug: p.destination_slug, city: p.city }])).values()
+  new Map(
+    properties.map((p) => [p.city, { slug: p.destination_slug, city: p.city, state: p.state }])
+  ).values()
 ).sort((a, b) => a.city.localeCompare(b.city));
 
 export default function VillasPage() {
@@ -23,25 +25,29 @@ export default function VillasPage() {
 function VillasContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [selected, setSelected] = useState<string>(searchParams.get("destination") ?? "all");
+  // Filter by city (not destination_slug) so North/South Goa stay separate
+  const [selectedCity, setSelectedCity] = useState<string>(searchParams.get("city") ?? "all");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const dest = searchParams.get("destination");
-    setSelected(dest ?? "all");
+    setSelectedCity(searchParams.get("city") ?? "all");
   }, [searchParams]);
 
-  function selectDestination(slug: string) {
-    setSelected(slug);
-    if (slug === "all") {
+  function selectDestination(city: string) {
+    setSelectedCity(city);
+    setSearch("");
+    if (city === "all") {
       router.replace("/properties", { scroll: false });
     } else {
-      router.replace(`/properties?destination=${slug}`, { scroll: false });
+      router.replace(`/properties?city=${encodeURIComponent(city)}`, { scroll: false });
     }
   }
 
   const filtered = useMemo(() => {
-    let list = selected === "all" ? properties : properties.filter((p) => p.destination_slug === selected);
+    let list =
+      selectedCity === "all"
+        ? properties
+        : properties.filter((p) => p.city === selectedCity);
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
@@ -52,7 +58,7 @@ function VillasContent() {
       );
     }
     return list;
-  }, [selected, search]);
+  }, [selectedCity, search]);
 
   return (
     <div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]">
@@ -66,9 +72,9 @@ function VillasContent() {
             </h1>
             <span className="font-sans text-sm text-charcoal/50 dark:text-ivory/50">
               {filtered.length} {filtered.length === 1 ? "villa" : "villas"}
-              {selected !== "all" && (
+              {selectedCity !== "all" && (
                 <span className="text-gold-600 dark:text-gold-400">
-                  {" "}in {allDestinations.find((d) => d.slug === selected)?.city}
+                  {" "}in {selectedCity}
                 </span>
               )}
             </span>
@@ -96,7 +102,7 @@ function VillasContent() {
             <button
               onClick={() => selectDestination("all")}
               className={`flex-shrink-0 px-4 py-1.5 text-[10px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200 ${
-                selected === "all"
+                selectedCity === "all"
                   ? "bg-charcoal text-ivory dark:bg-ivory dark:text-charcoal"
                   : "bg-stone-100 dark:bg-stone-800 text-charcoal/60 dark:text-ivory/60 hover:bg-stone-200 dark:hover:bg-stone-700"
               }`}
@@ -104,13 +110,13 @@ function VillasContent() {
               All ({properties.length})
             </button>
             {allDestinations.map((dest) => {
-              const count = properties.filter((p) => p.destination_slug === dest.slug).length;
+              const count = properties.filter((p) => p.city === dest.city).length;
               return (
                 <button
-                  key={dest.slug}
-                  onClick={() => selectDestination(dest.slug)}
+                  key={dest.city}
+                  onClick={() => selectDestination(dest.city)}
                   className={`flex-shrink-0 px-4 py-1.5 text-[10px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200 ${
-                    selected === dest.slug
+                    selectedCity === dest.city
                       ? "bg-gold-500 text-white"
                       : "bg-stone-100 dark:bg-stone-800 text-charcoal/60 dark:text-ivory/60 hover:bg-stone-200 dark:hover:bg-stone-700"
                   }`}
