@@ -8,22 +8,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  {
-    label: "Villas",
-    href: "/properties",
-    children: [
-      { label: "Udaipur", href: "/properties?destination=udaipur" },
-      { label: "Goa", href: "/properties?destination=goa" },
-      { label: "Jaipur", href: "/properties?destination=jaipur" },
-      { label: "Delhi NCR", href: "/properties?destination=delhi-ncr" },
-      { label: "Kasauli", href: "/properties?destination=kasauli" },
-      { label: "Mussoorie", href: "/properties?destination=mussoorie" },
-      { label: "Lonavala", href: "/properties?destination=lonavala" },
-      { label: "Alibaug", href: "/properties?destination=alibaug" },
-      { label: "Dubai", href: "/properties?destination=dubai" },
-      { label: "Bengaluru", href: "/properties?destination=bengaluru" },
-    ],
-  },
+  { label: "Villas", href: "/properties" },
   { label: "Experiences", href: "/experiences" },
   { label: "About", href: "/about" },
   { label: "Agent Program", href: "/agent-program" },
