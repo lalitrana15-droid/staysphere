@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,6 +13,14 @@ const allDestinations = Array.from(
 ).sort((a, b) => a.city.localeCompare(b.city));
 
 export default function VillasPage() {
+  return (
+    <Suspense fallback={<div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]" />}>
+      <VillasContent />
+    </Suspense>
+  );
+}
+
+function VillasContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [selected, setSelected] = useState<string>(searchParams.get("destination") ?? "all");
