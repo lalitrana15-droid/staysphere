@@ -229,6 +229,28 @@ const raw: R[] = [
   ["udr", 10, 11, 30, 62678, "Godan Terra Estate | 10-BHK Riverside Retreat with Pool"],
   ["udr", 6,  7,  18, 47048, "Godan Terra Cove | 6-BHK Retreat with Private Pool"],
   ["udr", 2,  3,  6,  18160, "Heaven in Hills Kahili | Pet-friendly 2-BHK Villa With Private Pool"],
+  ["udr", 1,  1,  3,  30449,  "Mountain Creek | Pet-friendly 1-Room Retreat With Shared Pool"],
+  ["udr", 3,  3,  9,  46045,  "Amber Royale | Heritage 3-BHK Villa With Private Pool, Garden & Terrace"],
+  ["udr", 4,  4,  12, 59071,  "Cows & Cuddles | Pet-friendly 4-BHK Farmstay with Pvt Pool & Gazebo"],
+  ["udr", 3,  3,  9,  40945,  "Shourya Athena | 3-BHK Villa With Swimming Pool & Terrace"],
+  ["udr", 1,  1,  3,  17797,  "Raj Villas Alvora | Pet-Friendly 1-Room Hotel Suite with Hill Views"],
+  ["udr", 3,  4,  9,  64872,  "Heaven in Hills Mountara | 3-BHK Villa With Private Pool & Jacuzzi"],
+  ["udr", 3,  4,  9,  51179,  "Shourya Celesta | Charming Hilltop 3-BHK Villa With Private Pool"],
+  ["udr", 3,  3,  9,  35717,  "Shourya Bliss | 3-BHK | Pvt Pool & Garden | Scenic Views"],
+  ["udr", 1,  1,  3,  20695,  "Raj Villas Astera | Pet-Friendly 1-Room Suite in Resort with Pool"],
+  ["udr", 3,  4,  9,  38335,  "Palazao | Country-Style 3-BHK Villa with Private Pool & Gazebo"],
+  ["udr", 3,  4,  9,  31847,  "Shourya Zenna | 3-BHK | Pvt Pool & Garden | Terrace | Scenic Views"],
+  ["udr", 1,  1,  3,  19040,  "Raj Villas Aurelia | Pet-Friendly 1-Room Hotel Suite with Jacuzzi"],
+  ["udr", 2,  3,  6,  21346,  "Bluebell | 2-BHK Villa With Private Pool, Gardens & Aravali Views"],
+  ["udr", 5,  5,  15, 54191,  "Roohmon's Farm | Exquisite 5-BHK Retreat With Private Pool & Bar"],
+  ["udr", 2,  3,  6,  22167,  "Parvam Retreat | Pet-friendly 2-BHK Villa With Private Pool"],
+  ["udr", 6,  6,  18, 40692,  "Abhimanyu Mansion Pearl | 6-BHK Manor With Rajasthani Charm & Garden"],
+  ["udr", 4,  4,  12, 35742,  "Abhimanyu Mansion Sapphire | 4-BHK Heritage Haveli With Garden"],
+  ["udr", 3,  3,  9,  28014,  "Colonel Retreat | 3-BHK Hideaway with Private Pool & Gardens"],
+  ["udr", 7,  7,  24, 168082, "Mountain Creek Retreat | Pet-friendly 7-BHK Villa With Pool"],
+  ["udr", 1,  1,  3,  38923,  "Mountain Creek Retreat | Pet-friendly Ultra-Luxe Suite With Pool"],
+  ["udr", 2,  2,  6,  18863,  "Abhimanyu Mansion Topaz | 2-BHK Haveli | Garden & Central Location"],
+  ["udr", 3,  4,  9,  49663,  "Festiva Mansion | Luxe 3-BHK Villa With Pvt Pool & Garden"],
 
   // ── JAIPUR ──────────────────────────────────────────────────────────────────
   ["jpr", 1,  1,  3,  13354, "Hathnoda Bagh Lagoon | Cottage within Mini Resort with Bathtub"],
@@ -259,6 +281,18 @@ const raw: R[] = [
   ["jpr", 5,  7,  15, 42900, "Skylark Estate | 5-BHK Forest-View Villa with Private Pool"],
   ["jpr", 3,  4,  9,  26918, "Laurels Villa | 3-BHK Villa With Private Pool & Bonfire Deck"],
   ["jpr", 5,  5,  15, 56780, "Bargoti Villa | 5-BHK Villa with Private Swimming Pool"],
+  ["jpr", 6,  7,  16, 100876, "Casa Horizon | 6-BHK Villa with Private Pool"],
+  ["jpr", 2,  3,  6,  29690,  "Navkar Villa | 2-BHK Villa with Private Indoor Pool & Steam Room"],
+  ["jpr", 4,  4,  12, 70885,  "Autum Villa | Pet-friendly 4-BHK Villa with Private Pool"],
+  ["jpr", 6,  7,  16, 66795,  "Vijaypura Bagh | Heritage-Style 6-BHK Retreat with Pool"],
+  ["jpr", 8,  8,  24, 88608,  "Bellezza Villa | 8-BHK Italian-Style Villa with Private Pool"],
+  ["jpr", 3,  3,  9,  70885,  "Royal Pavilion | 3-BHK Heritage Villa with Pool & Home Theatre"],
+  ["jpr", 5,  5,  15, 44984,  "Parshvika Estate | 5-BHK Villa with Private Pool"],
+  ["jpr", 5,  5,  15, 44984,  "Amaya Farms | 5-BHK Farm Villa with Two Private Pools"],
+  ["jpr", 3,  3,  9,  44984,  "Aura Sky Luxe | 3-BHK Luxury Apartment with Hill View"],
+  ["jpr", 3,  3,  9,  29690,  "Aura Sky Urban | 3-BHK Apartment with Hill View"],
+  ["jpr", 2,  3,  6,  77701,  "Giri Penthouse | Pet-friendly 2-BHK Penthouse"],
+  ["jpr", 3,  3,  9,  22951,  "Hathnoda Bagh Calista | Cottage with Shared Pool"],
 
   // ── KASAULI ─────────────────────────────────────────────────────────────────
   ["ksl", 4,  6,  10, 80754, "The Royce Daisy | Ultra-Luxe 4-BHK Villa With Heated Pool"],
@@ -295,6 +329,11 @@ const raw: R[] = [
   ["ksl", 3,  3,  6,  27104, "Mist & Manor Cedar | Pet-friendly 3-BHK Apartment"],
   ["ksl", 6,  6,  12, 60156, "Mist & Manor Maple | Pet-friendly 6-BHK Apartment"],
   ["ksl", 5,  6,  13, 34076, "Querencia | Pet-friendly 5-BHK Villa With Sunset & Hill Views"],
+  ["ksl", 1,  1,  4,  27214,  "Stars and WindSongs Peaks | Garden Suite with Shared Pool"],
+  ["ksl", 1,  1,  4,  27214,  "Stars and WindSongs Pines | Terrace Suite with Shared Pool"],
+  ["ksl", 6,  6,  14, 65433,  "Panchvati Veloraa | Spacious Pet-Friendly 6-BHK Apartment"],
+  ["ksl", 3,  3,  8,  42259,  "Panchvati Veloraa | Pet-friendly 3-BHK Apartment"],
+  ["ksl", 2,  3,  6,  34290,  "Live Life | Pet-friendly 2-BHK With Entertainment Room & Garden"],
 
   // ── LONAVALA ────────────────────────────────────────────────────────────────
   ["lon", 6,  7,  14, 77256,  "Villa 39 | Serene Pet-friendly 6-BHK Getaway With Private Pool"],
@@ -314,6 +353,8 @@ const raw: R[] = [
   ["lon", 4,  4,  12, 53808,  "Rainmist Villa | 4-BHK Pet-friendly Villa with Private Pool"],
   ["lon", 3,  4,  9,  42374,  "Rosalia | 3-BHK Villa With Shared Pool and Lawn"],
   ["lon", 4,  5,  10, 49942,  "Nest | 4-BHK | Pool | Terrace | Gazebo"],
+  ["lon", 3,  3,  9,  45440,  "Karvi | 3-BHK Villa with Private Pool, Jacuzzi, Terrace & Garden"],
+  ["lon", 4,  5,  10, 50160,  "Aster Villa | Pet-Friendly 4-BHK Retreat With Private Pool"],
 
   // ── BHIMTAL ─────────────────────────────────────────────────────────────────
   ["bhm", 2,  2,  6,  45400, "Antarmann Casa Ember | 2-BHK | Terrace | Lake View"],
@@ -324,6 +365,7 @@ const raw: R[] = [
   ["bhm", 2,  2,  4,  15396, "Kingdom Heartz | Elegant 2-BHK Apartment With Balcony"],
   ["bhm", 1,  1,  2,  9764,  "Kingdom Heartz | Cosy Studio Apartment With Balcony"],
   ["bhm", 4,  4,  12, 52362, "Irayna | 4-BHK | Garden & Lake View | Studio Room"],
+  ["bhm", 3,  4,  8,  56117,  "Blushing Pines Retreat | Pet-friendly 3-BHK Hillside Villa with Attic"],
 
   // ── MUSSOORIE ───────────────────────────────────────────────────────────────
   ["msr", 1,  1,  2,  17758, "Zephyr Classic Hut | Scenic Hill Getaway"],
@@ -340,6 +382,7 @@ const raw: R[] = [
   ["msr", 1,  1,  2,  17028, "Snowdrop Glamps | Pet-Friendly Dome Cottage"],
   ["msr", 3,  3,  6,  27838, "Snowdrop Retreat | Pet-friendly 3-BHK Apartment"],
   ["msr", 4,  4,  10, 48106, "Evara | Serene Pet-friendly 4-BHK Hill Retreat"],
+  ["msr", 3,  3,  6,  37411,  "Hilltop Villa | 3-BHK Villa with Terrace & Balconies near Mall Road"],
 
   // ── NORTH GOA ───────────────────────────────────────────────────────────────
   ["ngoa", 6,  8,  14, 134600, "Villa Fleuve | 6-BHK By the River With Infinity Pool"],
@@ -387,17 +430,36 @@ const raw: R[] = [
   ["ngoa", 1,  1,  3,  16148,  "Emperor Ozran Premium | Room With Bathtub"],
   ["ngoa", 1,  1,  4,  26290,  "House of Neptune | 1-BHK Cottage Near Ashwem Beach"],
   ["ngoa", 9,  10, 24, 179466, "Villa Riviere | 9-BHK Private Estate With Pool"],
+  ["ngoa", 3,  4,  7,  25508,  "BellaVie | 3-BHK Villa with Private Pool"],
+  ["ngoa", 4,  4,  10, 48923,  "Waves Cloud 7 | Luxury 4-BHK Villa with Private Pool"],
+  ["ngoa", 3,  3,  7,  48923,  "Mirai Aries | Stunning 3-BHK Villa With Pool"],
+  ["ngoa", 4,  4,  12, 47009,  "Celest | 4-BHK Villa with Private Pool"],
+  ["ngoa", 3,  3,  8,  56448,  "Orion | 3-BHK Villa with Private Pool"],
+  ["ngoa", 4,  4,  9,  63312,  "Casa Boa Vida | Luxury 4-BHK Villa with Private Pool"],
+  ["ngoa", 4,  5,  10, 43743,  "Cygnus | 4-BHK Villa with Private Pool"],
+  ["ngoa", 3,  3,  8,  47009,  "Panache | 3-BHK Villa with Private Pool"],
+  ["ngoa", 3,  4,  8,  47009,  "Elysium Villa | Portuguese-Inspired 3-BHK with Pool"],
+  ["ngoa", 4,  5,  10, 32633,  "Euphoria | 4-BHK Villa with Private Pool"],
+  ["ngoa", 3,  4,  7,  32633,  "Monforte Ayada | 3-BHK Villa with Private Pool"],
+  ["ngoa", 3,  3,  7,  48923,  "Mirai Villa Sukoon | 3-BHK Villa with Private Pool"],
+  ["ngoa", 4,  5,  10, 56042,  "Shai | Luxury 4-BHK Villa with Private Pool"],
+  ["ngoa", 5,  7,  12, 56042,  "Villa Frienders | Indo-Portuguese 5-BHK Villa With Pool"],
+  ["ngoa", 3,  4,  7,  57557,  "Casa Bella Vista | 3-BHK Luxury Villa with Pool"],
+  ["ngoa", 5,  6,  14, 90880,  "BluDoor | 5-BHK Villa with Private Pool"],
+  ["ngoa", 3,  3,  7,  52040,  "Coco Baia 6 | Pet-friendly 3-BHK Villa with Pool"],
+  ["ngoa", 1,  1,  3,  14000,  "Portico | Hotel Room With Shared Pool Near Bambolim Beach"],
+  ["ngoa", 4,  4,  10, 48923,  "Casa Isla | Heritage-Style 4-BHK Retreat with Private Pool"],
 
   // ── DELHI NCR ───────────────────────────────────────────────────────────────
-  ["ncr", 2,  2,  4,  35670,  "Raha Farms | 2-BHK Pet-friendly Retreat"],
+  ["ncr", 2,  2,  4,  35670,  "Raha Farms | 2-BHK Pet-friendly Retreat with a Garden, Shared pool, Restaurant, Library, & Game zone"],
   ["ncr", 6,  7,  18, 181604, "Heaven Farm | Pet-friendly 6-BHK Manor With Private Pool"],
   ["ncr", 1,  1,  3,  21232,  "Kimaya Kove | Hut-Style Cottage with Open-Air Shower"],
   ["ncr", 1,  1,  3,  26328,  "Kimaya Azora | Luxe Suite with Private Plunge Pool"],
   ["ncr", 5,  6,  15, 95342,  "Levante Farms | 5-BHK Villa With Private Pool, Bar, Garden"],
-  ["ncr", 1,  1,  3,  27832,  "Raha Farms | 1 Cottage With Common Pool"],
+  ["ncr", 1,  1,  3,  27832,  "Raha Farms | 1 Cottage With Common Pool, Restaurant, Game Zone, Gym & Conference Area"],
   ["ncr", 1,  1,  3,  15622,  "Aanandam Villas and Resort | Cottage With Private Plunge Pool"],
   ["ncr", 4,  6,  12, 90802,  "Gardenia | 4-BHK Farmhouse with Private Pool & Game Zone"],
-  ["ncr", 3,  4,  9,  121070, "Aravalli Reserve The Bliss | Pet-friendly 3-BHK Villa"],
+  ["ncr", 3,  4,  9,  121070, "Aravalli Reserve The Bliss | Pet-friendly 3-BHK Villa with Private Pool & Garden"],
   ["ncr", 3,  4,  9,  68252,  "House of Tvara | Pet-friendly 3-BHK Villa With Private Pool"],
   ["ncr", 2,  2,  6,  69992,  "Prassanam Vatika | 2-BHK Hillside Villa with Private Pool"],
   ["ncr", 5,  6,  15, 67986,  "AdhiVa Retreat | 5-BHK Pet-friendly Farmhouse With Private Pool"],
@@ -405,7 +467,7 @@ const raw: R[] = [
   ["ncr", 4,  5,  12, 85126,  "Varsha Greens | 4-BHK Retreat on 0.8-Acre Land With Private Pool"],
   ["ncr", 3,  4,  12, 79452,  "Handa's Gateway | Pet-friendly 3-BHK Retreat With Private Pool"],
   ["ncr", 3,  4,  10, 41718,  "Amber Villa | 3-BHK Retreat With Private Pool & Game Room"],
-  ["ncr", 2,  1,  6,  34390,  "Raha Farms | 1 Duplex on 5.5-Acre Land"],
+  ["ncr", 2,  1,  6,  34390,  "Raha Farms | 1 Duplex on 5.5-Acre Land With Shared Pool, Restro, Game Zone & Library"],
   ["ncr", 5,  6,  17, 77182,  "Zenora | Pet-friendly 5-BHK Farmhouse With Private Pool"],
   ["ncr", 4,  4,  12, 84956,  "Vedaaz Farms | Pet-friendly 4-BHK Farmhouse With Private Pool"],
   ["ncr", 4,  5,  11, 56902,  "Aarul Farm | 4-BHK With Private Pool, Gazebos & Game Zone"],
@@ -413,8 +475,8 @@ const raw: R[] = [
   ["ncr", 1,  1,  3,  9314,   "Aanandam Villas Resort | Standard Room With Shared Pool"],
   ["ncr", 1,  1,  2,  14722,  "Aanandam Villas Resort | Super Deluxe Room"],
   ["ncr", 1,  1,  3,  11566,  "Aanandam Villas Resort | Cottage With Shared Pool"],
-  ["ncr", 3,  4,  9,  121070, "Aravalli Reserve The Isley | Pet-friendly 3-BHK Villa"],
-  ["ncr", 5,  0,  15, 51514,  "Ashirwad Farms | Pet-friendly 5-BHK Retreat"],
+  ["ncr", 3,  4,  9,  121070, "Aravalli Reserve The Isley | Pet-friendly 3-BHK Villa with Private Pool & Garden"],
+  ["ncr", 5,  0,  15, 51514,  "Ashirwad Farms | Pet-friendly 5-BHK Retreat with Garden & Bonfire"],
   ["ncr", 2,  2,  6,  64318,  "Raga | 2-BHK | Private Pool | Garden | Gazebo"],
   ["ncr", 4,  4,  12, 49456,  "Luxe FarmAcre | Pet-friendly 4-BHK Villa With Private Pool"],
   ["ncr", 3,  4,  9,  36322,  "Dacha | Serene 3-BHK Escape With Garden & Jacuzzi"],
@@ -432,13 +494,17 @@ const raw: R[] = [
   ["ncr", 2,  3,  6,  30570,  "Ratikara Ullaas | 2-BHK with Private Pool"],
   ["ncr", 1,  1,  2,  11736,  "Emperor Palms | Executive Room | Restaurant | Lift"],
   ["ncr", 4,  4,  12, 58568,  "Pranita Farm | 4-BHK Villa with Private Pool"],
-  ["ncr", 2,  2,  8,  15772,  "Zinnia | 2-BHK Apartment With Shared Gaming Zone"],
+  ["ncr", 3,  3,  8,  15772,  "Freesia | 3-BHK Apartment With Common Gaming Zone | Close to Famous Malls"],
   ["ncr", 2,  2,  6,  13468,  "Radhika Villa | 2-BHK Villa close to Gaur City Mall"],
   ["ncr", 1,  1,  2,  13146,  "Emperor Palms | Premium Room | Restaurant | Lift"],
   ["ncr", 4,  4,  12, 63562,  "Aroma Green | 4-BHK Pet-Friendly Farmhouse With Private Pool"],
   ["ncr", 5,  5,  10, 102908, "JP Farm Stay | 5-BHK Villa Featuring Kids' Room"],
   ["ncr", 1,  1,  3,  15626,  "Malik Farms | Countryside Wooden Cottage on 2 Acre Estate"],
   ["ncr", 2,  3,  8,  35412,  "Royal Green Farm | Pet-friendly 2-BHK Countryside Farmhouse With Private Pool"],
+  ["ncr", 6,  6,  15, 84592,  "Esh | Charming Pet-friendly 6-BHK Villa With Private Pool & Garden"],
+  ["ncr", 3,  3,  8,  43218,  "Daffodil | Pet-friendly 3-BHK Villa With Pvt Pool & Garden"],
+  ["ncr", 1,  1,  3,  11800,  "KV Ventures Fable | Cottage with Shared Pool, Gazebo and Garden | Pet-friendly"],
+  ["ncr", 3,  3,  8,  26409,  "KV Ventures Mirage | 3-BHK Villa With Common Pool, Garden, Gazebo & Sit-Out Area | Pet-Friendly"],
 
   // ── DUBAI ───────────────────────────────────────────────────────────────────
   ["dxb", 2,  5,  4,  65000,  "2BR Sunset View Suite | Jumeirah Living Marina Gate"],
@@ -525,6 +591,13 @@ const raw: R[] = [
   ["blr", 1,  1,  4,  20656,  "Savian Suites Avira | Two Beds Room Suite with Balcony"],
   ["blr", 3,  4,  9,  133532, "Sravasthi Villa | 2-BHK Forest-View Villa With Private Jacuzzi"],
   ["blr", 1,  1,  2,  10514,  "Savian Suites Azure | Premium Room with Balcony"],
+  ["blr", 1,  1,  2,  52703,  "Bali Bay Langit | Glass Tent on 2-Acres with Pool"],
+  ["blr", 3,  3,  6,  90880,  "Arka Elysia | Vibrant 3-BHK Heritage Villa with Cabana"],
+  ["blr", 3,  4,  7,  90880,  "Arevana Evara | 3-BHK Villa with Pool & Garden"],
+  ["blr", 2,  2,  6,  104511, "Sravasthi Oria | Pet-friendly 2-BHK Forest-View Villa with Jacuzzi"],
+  ["blr", 1,  1,  3,  62564,  "Sravasthi Oryn | Luxury Pet-friendly Room with Gazebo"],
+  ["blr", 1,  1,  3,  62564,  "Arevana Vara | Luxury Tent with Shared Pool"],
+  ["blr", 4,  4,  8,  65000,  "HSR Penthouse | Spacious 4-BHK Penthouse with Balconies"],
 
   // ── SOUTH GOA ───────────────────────────────────────────────────────────────
   ["sgoa", 3,  4,  7,  53840, "Kensho Villas Marigold | 3-BHK With Lift"],
@@ -535,6 +608,7 @@ const raw: R[] = [
   ["sgoa", 1,  1,  3,  12606, "MidPoint Uno Suite | Pet-friendly 1-Room"],
   ["sgoa", 1,  1,  3,  15396, "Goan Bliss Premium Room | Aesthetic Suite"],
   ["sgoa", 1,  1,  3,  12580, "Goan Bliss Deluxe Room | Boutique Resort Stay"],
+  ["sgoa", 1,  1,  3,  30617, "Goan Bliss Junior Suite | Spacious Boutique Suite with Living Room, Private Terrace, Shared Pool, Restro, Spa & Library"],
 
   // ── SHIMLA ──────────────────────────────────────────────────────────────────
   ["shl", 4,  6,  19, 46914, "Skylounge | 4-BHK Villa With Panoramic Views"],
@@ -550,6 +624,7 @@ const raw: R[] = [
   ["shl", 2,  2,  4,  18462, "Spurce Holiday In Homestay | 2-BHK Valley-View Apartment"],
   ["shl", 1,  1,  3,  17744, "Baljees Melville Divine Apartments | 1-BHK | Kitchen"],
   ["shl", 1,  1,  2,  9012,  "The Ridgeview Retreat Olivia | Pet-friendly Room"],
+  ["shl", 5,  5,  12, 58233,  "Aranya Himalayan Retreat | 5-BHK Pet-Friendly Hillside Villa With Valley Views"],
 
   // ── NAINITAL ────────────────────────────────────────────────────────────────
   ["nnl", 3,  3,  9,  66586, "The Meadow | Elegant 3-BHK Hill Retreat"],
@@ -563,6 +638,9 @@ const raw: R[] = [
   ["nnl", 3,  4,  9,  39346, "Karinya Villas Frond | Scenic Hill View 3-BHK Villa"],
   ["nnl", 1,  1,  3,  14946, "Karinya Villas Fern | Scenic Hill View 1-BHK Villa"],
   ["nnl", 2,  2,  6,  25476, "Key Shree Bhawan | 2-BHK Valley View Apartment"],
+  ["nnl", 4,  6,  10, 63616,  "Twin Chalets | 4-BHK Pet-friendly Escape With Valley-Facing Lawn"],
+  ["nnl", 3,  3,  9,  37411,  "Woodbury Mansion | 3-BHK Villa with Naini Valley Views & Garden"],
+  ["nnl", 3,  3,  9,  46954,  "Farsauli 1° | Pet-friendly 3-BHK Hillside Getaway With Gazebo"],
 
   // ── DEHRADUN ────────────────────────────────────────────────────────────────
   ["ddn", 4,  4,  8,  62048, "The Kimadi House | 4-BHK English-Style Villa With Rooftop"],
@@ -573,6 +651,7 @@ const raw: R[] = [
   ["ddn", 3,  4,  7,  42494, "Rahta | 3-BHK Pet-friendly Retreat With Garden"],
   ["ddn", 2,  2,  4,  28536, "Alora in the Hills Cloudveil | Pet-friendly 2-BHK"],
   ["ddn", 1,  1,  2,  12908, "Kalyan Mansion Primrose | Elegant Room W/ Private Balcony"],
+  ["ddn", 3,  3,  8,  37719,  "Casa Bianca | Pet-Friendly 3-BHK Villa with Private Plunge Pool & Waterfall"],
 
   // ── JIM CORBETT ─────────────────────────────────────────────────────────────
   ["jcr", 3,  3,  9,  61140, "Aranya Library Aria | 3-BHK Villa With Kids' Room & Private Pool"],
@@ -587,6 +666,7 @@ const raw: R[] = [
   ["jcr", 1,  1,  2,  11814, "Dhela Jungle Retreat Pebble | Pet-Friendly Suite"],
   ["jcr", 3,  5,  10, 48428, "Farm Naturelle | Serene 3-BHK Farmhouse"],
   ["jcr", 7,  7,  14, 69324, "Dhela Jungle Retreat | Pet-Friendly 2-BHK + 5 Suites"],
+  ["jcr", 4,  4,  12, 48060,  "Mannat Villa | 4-BHK English-Style Forest-View Villa with Covered Deck"],
 
   // ── NASHIK ──────────────────────────────────────────────────────────────────
   ["nsk", 2,  2,  4,  44832, "Energise Soul Retreat Karuna Kutir | 2-BHK Villa With Pool"],
@@ -596,6 +676,8 @@ const raw: R[] = [
   ["nsk", 3,  3,  6,  65076, "Energise Soul Retreat Anahata Aalaya | 3-BHK Villa With Pool"],
   ["nsk", 3,  3,  6,  69614, "Energise Soul Retreat | 3-BHK Villa With Pool"],
   ["nsk", 3,  3,  6,  80588, "Energise Soul Retreat Ajna | 3-BHK Villa With Pool"],
+  ["nsk", 4,  4,  12, 36020,  "Bahava Villa | 4-BHK Heritage Laterite Stone Villa with Private Pool"],
+  ["nsk", 3,  5,  9,  43924,  "Advay Villa By Phalke | Luxurious 3-BHK Retreat with Private Pool"],
 
   // ── KARJAT ──────────────────────────────────────────────────────────────────
   ["krj", 2,  4,  6,  30266, "Heavenly Homes Villa | 2-BHK Villa with Private Pool"],
@@ -604,6 +686,7 @@ const raw: R[] = [
   ["krj", 4,  4,  12, 45400, "Sreelakam Villa | 4-BHK Hillside Hideaway With Private Pool"],
   ["krj", 4,  4,  12, 42978, "Ansh Villa | Luxury 4-BHK Pet-friendly Villa With Private Pool"],
   ["krj", 4,  4,  8,  40860, "Soulskape Villa | 4-BHK With Private Pool"],
+  ["krj", 4,  4,  10, 52939,  "Parijat Villa | 4-BHK Riverside Villa With Private Pool & Glass House"],
 
   // ── COORG ───────────────────────────────────────────────────────────────────
   ["crg", 5,  5,  14, 138874, "Tranquility | 5-BHK Pet-Friendly Villa With Pool"],
@@ -621,6 +704,8 @@ const raw: R[] = [
   ["igt", 1,  1,  3,  15772,  "Timber Premium Suite | Pet-friendly Bamboo Cottage"],
   ["igt", 1,  1,  3,  13146,  "Timber Standard Suite | Pet-friendly Bamboo Cottage"],
   ["igt", 3,  3,  9,  35714,  "GauRi Villa | 3-BHK Villa With Private Pool"],
+  ["igt", 5,  6,  15, 77247,  "VK Villa Galaxy | 5-BHK Villa with Private Indoor Pool, Bathtub, Lift, Games Room & Mountain View"],
+  ["igt", 5,  6,  15, 77247,  "VK Villa Supreme | 5-BHK Villa with Private Indoor Pool, Bathtub, Lift, Party room, Games Room & Mountain View"],
 
   // ── MUKTESHWAR ──────────────────────────────────────────────────────────────
   ["mkt", 1,  1,  4,  17464, "Hill Homes Cottages Mauve | 1-Room Suite"],
@@ -631,6 +716,7 @@ const raw: R[] = [
 
   // ── ALAPPUZHA ───────────────────────────────────────────────────────────────
   ["alp", 3,  3,  8,  64094, "Breeze and Grains Resort | 3-BHK Vacation Home"],
+  ["alp", 3,  3,  7,  38775, "Palliath House | 3-BHK With Living Lounge, Patio, Shared Lawn and 3 Natural Ponds | Near Andhakaranazhi Beach"],
   ["alp", 1,  1,  3,  13824, "Palliath House | 1-Pond-facing Room"],
   ["alp", 1,  1,  3,  13146, "Palm Dale Premium Room | Heritage Riverside Stay"],
   ["alp", 1,  1,  2,  12580, "Palm Dale Deluxe Room | Pet-friendly Heritage Retreat"],
@@ -640,6 +726,7 @@ const raw: R[] = [
   ["chn", 2,  2,  4,  86796, "Casa Santorini | Greek Style 2-BHK Villa"],
   ["chn", 1,  1,  3,  23980, "Nila Forrest | Timber Room With Private Pool"],
   ["chn", 2,  2,  6,  43464, "Mira Forrest | Cottage With Private Pool"],
+  ["chn", 4,  4,  12, 51497,  "Gerry's by the Sea ECR | Chic 4-BHK Escape with Lounge, Pool & Terrace"],
 
   // ── KOCHI ───────────────────────────────────────────────────────────────────
   ["kch", 5,  5,  11, 64094, "Valiyaveetil Mansion | 5-BHK Mansion With Private Pool"],
@@ -648,6 +735,7 @@ const raw: R[] = [
   ["kch", 4,  4,  9,  40058, "Nedumbally | 4-BHK Villa with Office Space"],
   ["kch", 3,  3,  8,  36588, "Mangaly Heritage | 270-Year-Old 3-BHK Authentic Kerala Heritage Villa"],
   ["kch", 3,  3,  14, 40860, "Pochan's Zen | 3-BHK Heritage Home"],
+  ["kch", 6,  6,  18, 95676,  "Heaven View | Contemporary 6-BHK Home with Landscaped Lawn near Cochin Airport"],
 
   // ── KOLAD ───────────────────────────────────────────────────────────────────
   ["kld", 1,  1,  3,  18160, "Junglebrooke Standard | Pet-Friendly Master Room with Pool"],
@@ -660,6 +748,8 @@ const raw: R[] = [
   ["rnt", 1,  1,  3,  28064, "Tiger Cave Suite | Pet-friendly Room with Shared Pool"],
   ["rnt", 1,  1,  3,  31572, "Tiger Cave Suite | 1-Room with Private Pool"],
   ["rnt", 1,  1,  3,  19500, "Bagh Serai | Pet-friendly Cottage With Plunge Pool"],
+  ["rnt", 1,  1,  4,  31237, "Bagh Serai | Pet-friendly Cottage With Plunge Pool & Living Area on 5-Acre Land With Common Pool & Restro"],
+  ["rnt", 1,  1,  2,  23152, "Bagh Serai | Pet-friendly Tree-House on 5-Acre Forested Land With Common Pool, Restro & Views"],
 
   // ── ALIBAUG ─────────────────────────────────────────────────────────────────
   ["alb", 5,  5,  12, 83270, "Casa Mocha | 5-BHK Pet-friendly Retreat With Private Pool"],
@@ -685,6 +775,7 @@ const raw: R[] = [
 
   // ── OOTY ────────────────────────────────────────────────────────────────────
   ["oty", 3,  3,  6,  28844, "Cleft | 3-BHK With Garden, Picturesque Verandah & Balcony"],
+  ["oty", 5,  5,  10, 51497, "Mihirika's Nirvana | 5-BHK With Garden, Gazebo, Bonfire Pit & Scenic Views; Near Karnataka Garden"],
 
   // ── PUSHKAR ─────────────────────────────────────────────────────────────────
   ["psk", 5,  5,  15, 79780, "Tuscan Villa | 5-BHK Pet-Friendly Retreat with Private Pool"],
@@ -695,6 +786,8 @@ const raw: R[] = [
 
   // ── DHARAMSHALA ─────────────────────────────────────────────────────────────
   ["dhl", 1,  1,  3,  15022, "Esh Cottage Hazel | 1 Hillview Suite With Shared Pool"],
+  ["dhl", 4,  4,  12, 17009,  "Esh Cottages Birch | 4-BHK Cottage with Pool"],
+  ["dhl", 2,  2,  6,  59435,  "Esh Cottages Moss | 2-BHK Cottage with Pool"],
 ];
 
 function slugify(s: string): string {
@@ -718,27 +811,63 @@ function mkType(name: string): Property["property_type"] {
 function mkPool(name: string): boolean {
   const n = name.toLowerCase();
   if (n.includes("pool table") || n.includes("pool hall")) return false;
+  if (n.includes("shared pool") || n.includes("common pool")) return false;
   return n.includes("pool") || n.includes("plunge") || n.includes("jacuzzi");
 }
 
 function mkAmenities(name: string, beds: number, hasPool: boolean): string[] {
   const n = name.toLowerCase();
-  const amenities: string[] = ["WiFi", "Air Conditioning", "Daily Housekeeping"];
+  // Standard amenities present in every luxury villa
+  const amenities: string[] = [
+    "WiFi", "Air Conditioning", "Television", "Bed Linen & Towels",
+    "Iron & Ironing Board", "Daily Housekeeping", "First Aid Kit",
+    "Fire Extinguisher", "Indoor Games", "Parking",
+  ];
+  // Pool types
   if (hasPool) amenities.push("Private Pool");
-  if (n.includes("jacuzzi")) amenities.push("Jacuzzi");
-  if (n.includes("bar")) amenities.push("Bar");
+  if (!hasPool && (n.includes("shared pool") || n.includes("common pool"))) amenities.push("Shared Pool");
+  if (n.includes("plunge pool")) amenities.push("Plunge Pool");
+  if (n.includes("indoor pool")) amenities.push("Indoor Pool");
+  if (n.includes("infinity pool")) amenities.push("Infinity Pool");
+  // Outdoor spaces
   if (n.includes("garden")) amenities.push("Garden");
-  if (n.includes("terrace") || n.includes("rooftop")) amenities.push("Terrace");
   if (n.includes("gazebo")) amenities.push("Gazebo");
+  if (n.includes("terrace")) amenities.push("Terrace");
+  if (n.includes("rooftop")) amenities.push("Rooftop Deck");
   if (n.includes("balcony")) amenities.push("Balcony");
-  if (n.includes("fireplace")) amenities.push("Fireplace");
+  if (n.includes("courtyard")) amenities.push("Courtyard");
+  if (n.includes("bonfire")) amenities.push("Bonfire Pit");
+  if (n.includes("bbq") || n.includes("barbecue") || n.includes("barbeque")) amenities.push("BBQ Grill");
+  if (n.includes("sit-out") || n.includes("sit out") || n.includes("sitout")) amenities.push("Sit-Out Area");
+  // Wellness & recreation
+  if (n.includes("jacuzzi")) amenities.push("Jacuzzi");
+  if (n.includes("sauna")) amenities.push("Sauna");
+  if (n.includes("gym") || n.includes("fitness")) amenities.push("Gym");
+  if (n.includes("spa")) amenities.push("Spa");
   if (n.includes("game") || n.includes("gaming")) amenities.push("Game Zone");
   if (n.includes("theater") || n.includes("theatre")) amenities.push("Home Theatre");
-  if (n.includes("kitchen")) amenities.push("Kitchen");
+  if (n.includes("disco")) amenities.push("Discotheque");
+  if (n.includes("kids") || n.includes("kid's")) amenities.push("Kids Play Area");
+  // Indoor spaces
+  if (n.includes("library")) amenities.push("Library");
+  if (n.includes("bar ") || n.includes("| bar") || n.includes("& bar") || n.includes(",bar")) amenities.push("Bar");
+  if (n.includes("kitchen")) amenities.push("Fully Equipped Kitchen");
+  if (n.includes("lounge")) amenities.push("Lounge Area");
+  if (n.includes("attic")) amenities.push("Attic");
+  if (n.includes("conference")) amenities.push("Conference Room");
+  // On-premises services
+  if (n.includes("restro") || n.includes("restaurant")) amenities.push("Restaurant on Premises");
+  if (n.includes("cafe") || n.includes("café")) amenities.push("Café");
+  // Guest features
   if (n.includes("pet")) amenities.push("Pet Friendly");
+  if (n.includes("outdoor shower") || n.includes("open-air shower")) amenities.push("Open-Air Shower");
+  if (n.includes("bathtub") || n.includes("bath tub")) amenities.push("Bathtub");
+  if (n.includes("lake view") || n.includes("sea view") || n.includes("mountain view") || n.includes("pool view")) amenities.push("Scenic Views");
+  if (n.includes("lift") || n.includes("elevator")) amenities.push("Elevator");
+  // Staff & services by size
+  if (beds >= 6) amenities.push("Butler Service");
   if (beds >= 4) amenities.push("Chef on Request");
   if (beds >= 3) amenities.push("Concierge Service");
-  amenities.push("Parking");
   return amenities;
 }
 

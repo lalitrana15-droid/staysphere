@@ -42,9 +42,17 @@ export default async function PropertyPage({ params }: Props) {
 
   const amenityGroups = [
     {
-      label: "Spaces",
+      label: "Outdoor & Spaces",
       items: property.amenities.filter((a) =>
-        ["Pool", "Rooftop", "Garden", "Courtyard", "Terrace", "Deck", "Library", "Home Theatre", "Cinema Room", "Games Room", "Gym", "Spa"].some(
+        ["Pool", "Jacuzzi", "Garden", "Gazebo", "Terrace", "Rooftop", "Balcony", "Courtyard", "Sit-Out", "Bonfire", "BBQ", "Outdoor"].some(
+          (keyword) => a.toLowerCase().includes(keyword.toLowerCase())
+        )
+      ),
+    },
+    {
+      label: "Recreation",
+      items: property.amenities.filter((a) =>
+        ["Game Zone", "Home Theatre", "Gym", "Spa", "Sauna", "Library", "Bar", "Discotheque", "Kids Play", "Lounge", "Conference"].some(
           (keyword) => a.toLowerCase().includes(keyword.toLowerCase())
         )
       ),
@@ -52,15 +60,15 @@ export default async function PropertyPage({ params }: Props) {
     {
       label: "Services",
       items: property.amenities.filter((a) =>
-        ["Butler", "Chef", "Concierge", "Housekeeping", "Transfer", "Camel", "Cultural"].some(
+        ["Butler", "Chef", "Concierge", "Housekeeping", "Restaurant", "Café", "Cafe"].some(
           (keyword) => a.toLowerCase().includes(keyword.toLowerCase())
         )
       ),
     },
     {
-      label: "Connectivity",
+      label: "Essentials",
       items: property.amenities.filter((a) =>
-        ["WiFi", "Air Conditioning", "Smart Home"].some(
+        ["WiFi", "Air Conditioning", "Television", "Bed Linen", "Iron", "First Aid", "Fire Extinguisher", "Indoor Games", "Parking", "Elevator", "Kitchen", "Bathtub"].some(
           (keyword) => a.toLowerCase().includes(keyword.toLowerCase())
         )
       ),

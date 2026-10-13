@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Users, Search } from "lucide-react";
+import { BedDouble, Bath, Users, MapPin, ChevronDown, Search } from "lucide-react";
 import { properties } from "@/data/properties";
 
-// Build unique destination list — key by city to keep North Goa & South Goa separate
 const allDestinations = Array.from(
   new Map(
-    properties.map((p) => [p.city, { slug: p.destination_slug, city: p.city, state: p.state }])
+    properties.map((p) => [p.city, { city: p.city, state: p.state, count: 0 }])
   ).values()
-).sort((a, b) => a.city.localeCompare(b.city));
+).map((d) => ({ ...d, count: properties.filter((p) => p.city === d.city).length }))
+  .sort((a, b) => a.city.localeCompare(b.city));
 
 export default function VillasPage() {
   return (
@@ -25,115 +25,162 @@ export default function VillasPage() {
 function VillasContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  // Filter by city (not destination_slug) so North/South Goa stay separate
-  const [selectedCity, setSelectedCity] = useState<string>(searchParams.get("city") ?? "all");
-  const [search, setSearch] = useState("");
+
+  const [selectedCity, setSelectedCity] = useState<string>(searchParams.get("city") ?? "");
+  const [guests, setGuests] = useState<number>(parseInt(searchParams.get("guests") ?? "0") || 0);
+  const [destOpen, setDestOpen] = useState(false);
+  const [destSearch, setDestSearch] = useState("");
+  const destRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setSelectedCity(searchParams.get("city") ?? "all");
+    setSelectedCity(searchParams.get("city") ?? "");
+    setGuests(parseInt(searchParams.get("guests") ?? "0") || 0);
   }, [searchParams]);
 
-  function selectDestination(city: string) {
-    setSelectedCity(city);
-    setSearch("");
-    if (city === "all") {
-      router.replace("/properties", { scroll: false });
-    } else {
-      router.replace(`/properties?city=${encodeURIComponent(city)}`, { scroll: false });
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (destRef.current && !destRef.current.contains(e.target as Node)) {
+        setDestOpen(false);
+        setDestSearch("");
+      }
     }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const filteredDests = allDestinations.filter((d) =>
+    d.city.toLowerCase().includes(destSearch.toLowerCase())
+  );
+
+  function applySearch() {
+    const params = new URLSearchParams();
+    if (selectedCity) params.set("city", selectedCity);
+    if (guests > 0) params.set("guests", String(guests));
+    const qs = params.toString();
+    router.replace(qs ? `/properties?${qs}` : "/properties", { scroll: false });
+    setDestOpen(false);
   }
 
   const filtered = useMemo(() => {
-    let list =
-      selectedCity === "all"
-        ? properties
-        : properties.filter((p) => p.city === selectedCity);
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.city.toLowerCase().includes(q) ||
-          (p.code ?? "").toLowerCase().includes(q)
-      );
-    }
+    let list = properties;
+    if (selectedCity) list = list.filter((p) => p.city === selectedCity);
+    if (guests > 0) list = list.filter((p) => p.max_guests >= guests);
     return list;
-  }, [selectedCity, search]);
+  }, [selectedCity, guests]);
 
   return (
     <div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]">
-      {/* Header */}
-      <div className="bg-white dark:bg-[#0f0f0f] border-b border-stone-200/60 dark:border-stone-800/60 py-12">
+      {/* Hero / Search Bar */}
+      <div className="bg-white dark:bg-[#0f0f0f] border-b border-stone-200/60 dark:border-stone-800/60 py-10">
         <div className="luxury-container">
-          <p className="label-text mb-3">Our Collection</p>
-          <div className="flex items-end justify-between gap-6 flex-wrap">
-            <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory">
-              All Villas
-            </h1>
-            <span className="font-sans text-sm text-charcoal/50 dark:text-ivory/50">
-              {filtered.length} {filtered.length === 1 ? "villa" : "villas"}
-              {selectedCity !== "all" && (
-                <span className="text-gold-600 dark:text-gold-400">
-                  {" "}in {selectedCity}
-                </span>
+          <p className="label-text mb-2">Our Collection</p>
+          <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory mb-8">
+            All Villas
+          </h1>
+
+          {/* Search Bar */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#181818] shadow-sm">
+            {/* Destination */}
+            <div ref={destRef} className="relative flex-1 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700">
+              <button
+                onClick={() => { setDestOpen((o) => !o); }}
+                className="w-full flex items-center gap-3 px-5 py-4 text-left"
+              >
+                <MapPin className="w-4 h-4 text-gold-500 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Destination</p>
+                  <p className={`text-sm font-sans truncate ${selectedCity ? "text-charcoal dark:text-ivory" : "text-charcoal/30 dark:text-ivory/30"}`}>
+                    {selectedCity || "All destinations"}
+                  </p>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-charcoal/30 dark:text-ivory/30 transition-transform duration-200 ${destOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {destOpen && (
+                <div className="absolute top-full left-0 right-0 z-50 bg-white dark:bg-[#181818] border border-stone-200 dark:border-stone-700 shadow-luxury mt-1 max-h-72 overflow-hidden flex flex-col">
+                  <div className="p-2 border-b border-stone-100 dark:border-stone-800">
+                    <input
+                      type="text"
+                      placeholder="Search destinations..."
+                      value={destSearch}
+                      onChange={(e) => setDestSearch(e.target.value)}
+                      className="w-full px-3 py-1.5 text-sm font-sans bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-charcoal dark:text-ivory placeholder:text-charcoal/30 dark:placeholder:text-ivory/30 focus:outline-none"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="overflow-y-auto">
+                    <button
+                      onClick={() => { setSelectedCity(""); setDestOpen(false); setDestSearch(""); }}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-sans transition-colors ${!selectedCity ? "bg-gold-50 dark:bg-gold-900/20 text-gold-600 dark:text-gold-400" : "text-charcoal/70 dark:text-ivory/70 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
+                    >
+                      All destinations
+                      <span className="ml-2 text-xs text-charcoal/30 dark:text-ivory/30">({properties.length})</span>
+                    </button>
+                    {filteredDests.map((d) => (
+                      <button
+                        key={d.city}
+                        onClick={() => { setSelectedCity(d.city); setDestOpen(false); setDestSearch(""); }}
+                        className={`w-full text-left px-4 py-2.5 text-sm font-sans transition-colors ${selectedCity === d.city ? "bg-gold-50 dark:bg-gold-900/20 text-gold-600 dark:text-gold-400" : "text-charcoal/70 dark:text-ivory/70 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
+                      >
+                        {d.city}
+                        {d.state ? <span className="text-charcoal/30 dark:text-ivory/30">, {d.state}</span> : null}
+                        <span className="ml-2 text-xs text-charcoal/30 dark:text-ivory/30">({d.count})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </span>
-          </div>
-        </div>
-      </div>
+            </div>
 
-      {/* Filters */}
-      <div className="sticky top-16 z-30 bg-white/95 dark:bg-[#0f0f0f]/95 backdrop-blur-sm border-b border-stone-200/60 dark:border-stone-800/60">
-        <div className="luxury-container py-4">
-          {/* Search */}
-          <div className="relative mb-4 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal/30 dark:text-ivory/30" />
-            <input
-              type="text"
-              placeholder="Search villas..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm font-sans bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-charcoal dark:text-ivory placeholder:text-charcoal/30 dark:placeholder:text-ivory/30 focus:outline-none focus:border-gold-500"
-            />
-          </div>
+            {/* Guests */}
+            <div className="flex items-center gap-3 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-52">
+              <Users className="w-4 h-4 text-gold-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Guests</p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setGuests((g) => Math.max(0, g - 1))}
+                    className="w-5 h-5 flex items-center justify-center text-charcoal/40 dark:text-ivory/40 hover:text-charcoal dark:hover:text-ivory border border-stone-200 dark:border-stone-700 text-sm leading-none"
+                  >−</button>
+                  <span className="text-sm font-sans text-charcoal dark:text-ivory w-6 text-center">
+                    {guests === 0 ? "Any" : guests}
+                  </span>
+                  <button
+                    onClick={() => setGuests((g) => g + 1)}
+                    className="w-5 h-5 flex items-center justify-center text-charcoal/40 dark:text-ivory/40 hover:text-charcoal dark:hover:text-ivory border border-stone-200 dark:border-stone-700 text-sm leading-none"
+                  >+</button>
+                </div>
+              </div>
+            </div>
 
-          {/* Destination tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {/* Search Button */}
             <button
-              onClick={() => selectDestination("all")}
-              className={`flex-shrink-0 px-4 py-1.5 text-[10px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200 ${
-                selectedCity === "all"
-                  ? "bg-charcoal text-ivory dark:bg-ivory dark:text-charcoal"
-                  : "bg-stone-100 dark:bg-stone-800 text-charcoal/60 dark:text-ivory/60 hover:bg-stone-200 dark:hover:bg-stone-700"
-              }`}
+              onClick={applySearch}
+              className="flex items-center justify-center gap-2 px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white transition-colors duration-200"
             >
-              All ({properties.length})
+              <Search className="w-4 h-4" />
+              <span className="text-[11px] font-sans font-semibold tracking-[0.15em] uppercase">Search</span>
             </button>
-            {allDestinations.map((dest) => {
-              const count = properties.filter((p) => p.city === dest.city).length;
-              return (
-                <button
-                  key={dest.city}
-                  onClick={() => selectDestination(dest.city)}
-                  className={`flex-shrink-0 px-4 py-1.5 text-[10px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200 ${
-                    selectedCity === dest.city
-                      ? "bg-gold-500 text-white"
-                      : "bg-stone-100 dark:bg-stone-800 text-charcoal/60 dark:text-ivory/60 hover:bg-stone-200 dark:hover:bg-stone-700"
-                  }`}
-                >
-                  {dest.city} ({count})
-                </button>
-              );
-            })}
           </div>
+
+          {/* Result count */}
+          <p className="mt-4 text-sm font-sans text-charcoal/50 dark:text-ivory/50">
+            <span className="text-charcoal dark:text-ivory font-medium">{filtered.length}</span> villas
+            {selectedCity && <span className="text-gold-600 dark:text-gold-400"> in {selectedCity}</span>}
+            {guests > 0 && <span> · {guests}+ guests</span>}
+          </p>
         </div>
       </div>
 
       {/* Grid */}
       <div className="luxury-container py-12">
         {filtered.length === 0 ? (
-          <div className="text-center py-24 text-charcoal/40 dark:text-ivory/40 font-sans text-sm">
-            No villas found
+          <div className="text-center py-24">
+            <p className="text-charcoal/40 dark:text-ivory/40 font-sans text-sm mb-3">No villas found</p>
+            <button onClick={() => { setSelectedCity(""); setGuests(0); router.replace("/properties", { scroll: false }); }}
+              className="text-gold-600 dark:text-gold-400 text-xs font-sans underline underline-offset-2">
+              Clear filters
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,13 +199,13 @@ function VillasContent() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  <div className="absolute top-3 left-3 flex gap-2">
-                    {property.has_pool && (
+                  {property.has_pool && (
+                    <div className="absolute top-3 left-3">
                       <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
                         Pool
                       </span>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <div className="absolute bottom-3 left-3">
                     <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
                       {property.city}{property.state ? `, ${property.state}` : ""}
