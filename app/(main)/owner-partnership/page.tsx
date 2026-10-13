@@ -4,9 +4,9 @@ import { OwnerInquiryForm } from "@/components/forms/OwnerInquiryForm";
 import { Shield, TrendingUp, Users, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "List Your Property — Partner With StaySphere",
+  title: "List Your Property — Partner With StaysVacation",
   description:
-    "List your luxury property on StaySphere. Join India's most trusted luxury stay distribution network and connect with discerning travellers worldwide.",
+    "List your luxury property on StaysVacation. Join India's most trusted luxury stay distribution network and connect with discerning travellers worldwide.",
 };
 
 export default function OwnerPartnershipPage() {
@@ -41,12 +41,12 @@ export default function OwnerPartnershipPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Left */}
             <div>
-              <p className="label-text mb-5">Why StaySphere</p>
+              <p className="label-text mb-5">Why StaysVacation</p>
               <h2 className="font-serif text-3xl md:text-4xl font-light text-charcoal dark:text-ivory mb-8">
                 Your Property Deserves the Right Audience
               </h2>
               <p className="text-sm font-sans text-charcoal/70 dark:text-ivory/70 leading-relaxed mb-10">
-                StaySphere connects extraordinary properties with discerning travellers who appreciate genuine luxury. We don&apos;t just list your property — we position it, present it, and protect its reputation within our curated network.
+                StaysVacation connects extraordinary properties with discerning travellers who appreciate genuine luxury. We don&apos;t just list your property — we position it, present it, and protect its reputation within our curated network.
               </p>
 
               <div className="grid grid-cols-2 gap-6 mb-12">
@@ -91,7 +91,7 @@ export default function OwnerPartnershipPage() {
               <div className="bg-gold-500/5 border border-gold-500/20 p-6">
                 <p className="label-text mb-3">Our Standards</p>
                 <p className="text-sm font-sans text-charcoal/70 dark:text-ivory/70 leading-relaxed">
-                  StaySphere maintains one of the industry&apos;s most rigorous property selection processes. We personally inspect every property before listing and maintain ongoing quality standards. Only a select few applications are accepted each quarter.
+                  StaysVacation maintains one of the industry&apos;s most rigorous property selection processes. We personally inspect every property before listing and maintain ongoing quality standards. Only a select few applications are accepted each quarter.
                 </p>
               </div>
             </div>

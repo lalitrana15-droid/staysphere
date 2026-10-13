@@ -4,8 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { destinations } from "@/data/destinations";
-import { cn } from "@/lib/utils";
-
 export function FeaturedDestinations() {
   return (
     <section className="section-padding bg-white dark:bg-[#0D0D0D]">
@@ -23,17 +21,8 @@ export function FeaturedDestinations() {
         </div>
 
         {/* Destination Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {/* Featured Large Destination */}
-          <div className="col-span-2 md:col-span-2 lg:col-span-2 row-span-2">
-            <DestinationCard
-              destination={destinations[0]}
-              large
-            />
-          </div>
-
-          {/* Remaining Destinations */}
-          {destinations.slice(1, 9).map((dest, idx) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {destinations.slice(0, 8).map((dest) => (
             <DestinationCard
               key={dest.slug}
               destination={dest}
@@ -58,52 +47,31 @@ export function FeaturedDestinations() {
 
 function DestinationCard({
   destination,
-  large = false,
 }: {
   destination: (typeof destinations)[0];
-  large?: boolean;
 }) {
   return (
     <Link
       href={`/destinations/${destination.slug}`}
-      className={cn(
-        "group relative overflow-hidden block",
-        large ? "h-[400px] md:h-[500px]" : "h-[180px] md:h-[235px]"
-      )}
+      className="group relative overflow-hidden block h-[220px] md:h-[260px]"
     >
       <Image
         src={destination.hero_image}
         alt={destination.name}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-110"
-        sizes={large ? "(max-width: 768px) 100vw, 40vw" : "(max-width: 768px) 50vw, 20vw"}
+        sizes="(max-width: 768px) 50vw, 25vw"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-        {large && (
-          <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-gold-300 mb-2">
-            {destination.state || destination.country}
-          </p>
-        )}
-        <h3
-          className={cn(
-            "font-serif text-white font-light leading-tight",
-            large ? "text-3xl md:text-4xl" : "text-xl md:text-2xl"
-          )}
-        >
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+        <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-gold-300 mb-1">
+          {destination.state || destination.country}
+        </p>
+        <h3 className="font-serif text-white font-light text-xl md:text-2xl leading-tight">
           {destination.name}
         </h3>
-        {large && (
-          <p className="text-xs font-sans text-white/70 mt-2 leading-relaxed line-clamp-2">
-            {destination.short_description}
-          </p>
-        )}
-        <div className="flex items-center gap-1 mt-3 text-gold-300 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-          <span className="text-xs font-sans font-medium tracking-[0.1em] uppercase">
-            Explore
-          </span>
+        <div className="flex items-center gap-1 mt-2 text-gold-300 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+          <span className="text-xs font-sans font-medium tracking-[0.1em] uppercase">Explore</span>
           <ArrowRight className="w-3 h-3" />
         </div>
       </div>

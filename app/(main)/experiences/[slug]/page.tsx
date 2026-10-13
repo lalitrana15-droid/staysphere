@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!experience) return { title: "Experience Not Found" };
 
   return {
-    title: `${experience.title} | StaySphere Luxury Experiences`,
+    title: `${experience.title} | StaysVacation Luxury Experiences`,
     description: experience.description,
   };
 }
@@ -66,7 +66,7 @@ export default async function ExperiencePage({ params }: Props) {
               </p>
 
               <div className="mt-12">
-                <p className="label-text mb-6">Why Choose StaySphere</p>
+                <p className="label-text mb-6">Why Choose StaysVacation</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[
                     "Personalised to your vision",

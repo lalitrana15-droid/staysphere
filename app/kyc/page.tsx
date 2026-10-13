@@ -4,13 +4,13 @@ import { ShieldCheck, Lock } from "lucide-react";
 import { KycForm } from "@/components/forms/KycForm";
 
 export const metadata: Metadata = {
-  title: "Guest KYC — StaySphere",
-  description: "Complete your identity verification before check-in at your StaySphere property.",
+  title: "Guest KYC — StaysVacation",
+  description: "Complete your identity verification before check-in at your StaysVacation property.",
 };
 
 export default function KycPage() {
   return (
-    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0A0A0A] pt-24 pb-16">
+    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0A0A0A] pt-12 pb-16">
       <div className="luxury-container">
         {/* Header */}
         <div className="text-center mb-10">

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact StaySphere — Luxury Stay Enquiries",
+  title: "Contact StaysVacation — Luxury Stay Enquiries",
   description:
     "Get in touch with our luxury travel specialists. We respond to all enquiries within 2 hours.",
 };
@@ -22,7 +22,7 @@ export default function ContactPage() {
           </h1>
           <div className="w-16 h-px bg-gold-500 mx-auto mb-6" />
           <p className="text-sm font-sans text-ivory/60 max-w-md mx-auto">
-            Whether you are planning a holiday, a wedding, a corporate retreat, or simply want to learn more about StaySphere — our team is here to help.
+            Whether you are planning a holiday, a wedding, a corporate retreat, or simply want to learn more about StaysVacation — our team is here to help.
           </p>
         </div>
       </div>
@@ -36,53 +36,6 @@ export default function ContactPage() {
               <div>
                 <p className="label-text mb-6">Contact Information</p>
                 <div className="space-y-5">
-                  <a
-                    href="mailto:hello@staysphere.com"
-                    className="flex items-start gap-4 group"
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center border border-gold-500/30 bg-gold-500/5 flex-shrink-0">
-                      <Mail className="w-4 h-4 text-gold-500" />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 dark:text-ivory/40 mb-1">
-                        Email
-                      </p>
-                      <p className="text-sm font-sans text-charcoal dark:text-ivory group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
-                        hello@staysphere.com
-                      </p>
-                    </div>
-                  </a>
-
-                  <a
-                    href="tel:+919999999999"
-                    className="flex items-start gap-4 group"
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center border border-gold-500/30 bg-gold-500/5 flex-shrink-0">
-                      <Phone className="w-4 h-4 text-gold-500" />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 dark:text-ivory/40 mb-1">
-                        Phone
-                      </p>
-                      <p className="text-sm font-sans text-charcoal dark:text-ivory group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
-                        +91 99999 99999
-                      </p>
-                    </div>
-                  </a>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 flex items-center justify-center border border-gold-500/30 bg-gold-500/5 flex-shrink-0">
-                      <MapPin className="w-4 h-4 text-gold-500" />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 dark:text-ivory/40 mb-1">
-                        Location
-                      </p>
-                      <p className="text-sm font-sans text-charcoal dark:text-ivory">
-                        Mumbai, India
-                      </p>
-                    </div>
-                  </div>
 
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 flex items-center justify-center border border-gold-500/30 bg-gold-500/5 flex-shrink-0">

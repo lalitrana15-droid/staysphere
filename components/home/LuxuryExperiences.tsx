@@ -19,7 +19,7 @@ export function LuxuryExperiences() {
           </h2>
           <div className="w-16 h-px bg-gold-500 mx-auto mb-6" />
           <p className="font-sans text-sm text-ivory/60 max-w-xl mx-auto leading-relaxed">
-            From intimate lakeside weddings to immersive Ayurvedic retreats — StaySphere crafts experiences that become lifelong memories.
+            From intimate lakeside weddings to immersive Ayurvedic retreats — StaysVacation crafts experiences that become lifelong memories.
           </p>
         </div>
 

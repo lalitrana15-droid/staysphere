@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AgentDashboard } from "./AgentDashboard";
 
 interface Props {
@@ -42,7 +43,9 @@ export default async function AgentPortalPage({ params }: Props) {
   const { code } = await params;
   const { agent, leads, kycRecords } = await getAgentData(code);
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://staycove.in";
+  if (!agent) redirect("/agent-program?error=invalid_code");
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://staysvacation.com";
   const referralLink = `${baseUrl}/?ref=${code}`;
   const kycBaseUrl = `${baseUrl}/kyc?ref=${code}`;
 

@@ -23,10 +23,10 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://staysphere.com"),
+  metadataBase: new URL("https://staysvacation.com"),
   title: {
-    default: "StaySphere — Global Luxury Stay Distribution Network",
-    template: "%s | StaySphere",
+    default: "StaysVacation — Global Luxury Stay Distribution Network",
+    template: "%s | StaysVacation",
   },
   description:
     "Discover extraordinary luxury villas, estates, and private retreats across India, Dubai, Bali and beyond. The world's most curated luxury stay marketplace.",
@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     "private pool villas India",
     "luxury stays marketplace",
     "villa rentals India",
-    "StaySphere",
+    "StaysVacation",
   ],
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://staysphere.com",
-    siteName: "StaySphere",
-    title: "StaySphere — Global Luxury Stay Distribution Network",
+    url: "https://staysvacation.com",
+    siteName: "StaysVacation",
+    title: "StaysVacation — Global Luxury Stay Distribution Network",
     description:
       "Discover extraordinary luxury villas and private retreats across India and the world.",
     images: [
@@ -53,13 +53,13 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=90",
         width: 1200,
         height: 630,
-        alt: "StaySphere Luxury Stays",
+        alt: "StaysVacation Luxury Stays",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "StaySphere — Global Luxury Stay Distribution Network",
+    title: "StaysVacation — Global Luxury Stay Distribution Network",
     description:
       "Discover extraordinary luxury villas and private retreats across India and the world.",
   },

@@ -47,25 +47,25 @@ export async function GET(
   }
 
   const now = new Date();
-  const uid = `${property.slug}-${now.getTime()}@staysphere.com`;
+  const uid = `${property.slug}-${now.getTime()}@staysvacation.com`;
   const dtstamp = toICSDate(now);
 
   const description = property.short_description
     .replace(/\n/g, "\\n")
     .replace(/,/g, "\\,");
 
-  const summary = `${property.title} — StaySphere`;
+  const summary = `${property.title} — StaysVacation`;
 
   const location = [property.city, property.state, property.country]
     .filter(Boolean)
     .join(", ");
 
-  const url = `https://staysphere.com/properties/${property.slug}`;
+  const url = `https://staysvacation.com/properties/${property.slug}`;
 
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//StaySphere//Property Enquiry//EN",
+    "PRODID:-//StaysVacation//Property Enquiry//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",

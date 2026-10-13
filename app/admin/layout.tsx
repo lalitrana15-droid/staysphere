@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="px-6 py-6 border-b border-white/10">
           <Link href="/" className="flex flex-col">
             <span className="font-display text-xl font-light tracking-[0.08em] text-ivory">
-              StaySphere
+              StaysVacation
             </span>
             <span className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-gold-400 mt-0.5">
               Admin Panel

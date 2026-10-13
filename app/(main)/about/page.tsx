@@ -4,9 +4,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About StaySphere — Our Story",
+  title: "About StaysVacation — Our Story",
   description:
-    "StaySphere is India's premier luxury stay distribution network, connecting discerning travellers with the world's most extraordinary private properties.",
+    "StaysVacation is India's premier luxury stay distribution network, connecting discerning travellers with the world's most extraordinary private properties.",
 };
 
 export default function AboutPage() {
@@ -16,7 +16,7 @@ export default function AboutPage() {
       <div className="relative h-[50vh] min-h-[350px] flex items-end overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=90"
-          alt="About StaySphere"
+          alt="About StaysVacation"
           fill
           className="object-cover"
           priority
@@ -27,7 +27,7 @@ export default function AboutPage() {
             Our Story
           </p>
           <h1 className="font-serif text-5xl md:text-6xl font-light text-white">
-            About StaySphere
+            About StaysVacation
           </h1>
         </div>
       </div>
@@ -42,10 +42,10 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-5 text-sm font-sans text-charcoal/70 dark:text-ivory/70 leading-relaxed">
               <p>
-                StaySphere was born from a simple observation: the world&apos;s most extraordinary private properties were inaccessible to the travellers most deserving of them. Hidden behind closed doors, passed between a handful of agents in hushed conversations, the best luxury stays in India were a secret — a remarkably well-kept one.
+                StaysVacation was born from a simple observation: the world&apos;s most extraordinary private properties were inaccessible to the travellers most deserving of them. Hidden behind closed doors, passed between a handful of agents in hushed conversations, the best luxury stays in India were a secret — a remarkably well-kept one.
               </p>
               <p>
-                We set out to change that. StaySphere is the Global Luxury Stay Distribution Network — a curated marketplace that connects discerning travellers, luxury travel agents, wedding planners, and corporate retreat specialists with India&apos;s (and the world&apos;s) most extraordinary private properties.
+                We set out to change that. StaysVacation is the Global Luxury Stay Distribution Network — a curated marketplace that connects discerning travellers, luxury travel agents, wedding planners, and corporate retreat specialists with India&apos;s (and the world&apos;s) most extraordinary private properties.
               </p>
               <p>
                 Every property in our network has been personally inspected and verified against our exacting standards. We don&apos;t list everything — we list the extraordinary. Our team has walked through hundreds of properties to bring you the select few that genuinely live up to the word luxury.
@@ -118,7 +118,7 @@ export default function AboutPage() {
                 Making Extraordinary Accessible
               </h2>
               <p className="text-sm font-sans text-ivory/60 leading-relaxed mb-8">
-                The extraordinary should not be reserved for the privileged few who happen to know the right people. StaySphere opens the doors to India&apos;s most exceptional private properties for everyone who appreciates genuine luxury.
+                The extraordinary should not be reserved for the privileged few who happen to know the right people. StaysVacation opens the doors to India&apos;s most exceptional private properties for everyone who appreciates genuine luxury.
               </p>
               <div className="flex gap-4">
                 <Link href="/destinations" className="btn-gold">
@@ -132,7 +132,7 @@ export default function AboutPage() {
             <div className="relative h-80 lg:h-96">
               <Image
                 src="https://images.unsplash.com/photo-1582610116397-edb72278f447?w=800&q=90"
-                alt="StaySphere Team"
+                alt="StaysVacation Team"
                 fill
                 className="object-cover"
                 sizes="50vw"

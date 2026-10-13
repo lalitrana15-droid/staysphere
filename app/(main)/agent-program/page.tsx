@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { AgentRegistrationForm } from "@/components/forms/AgentRegistrationForm";
+import { AgentProgramTabs } from "@/components/forms/AgentProgramTabs";
 import { Check, TrendingUp, Users, Headphones, Zap, IndianRupee, Link } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Agent Program — Partner With StaySphere",
+  title: "Agent Program — Partner With StaysVacation",
   description:
-    "Join StaySphere's Agent Program. Earn 10% commission on every booking. Access B2B pricing, dedicated support, exclusive inventory, and faster bookings.",
+    "Join StaysVacation's Agent Program. Earn 10% commission on every booking. Access B2B pricing, dedicated support, exclusive inventory, and faster bookings.",
 };
 
 const benefits = [
@@ -60,7 +62,7 @@ export default function AgentProgramPage() {
             For Travel Professionals
           </p>
           <h1 className="font-serif text-5xl md:text-6xl font-light text-white mb-3">
-            Partner With StaySphere
+            Partner With StaysVacation
           </h1>
           <p className="text-sm font-sans text-white/70 max-w-lg">
             Join India&apos;s most trusted luxury stay distribution network.
@@ -79,7 +81,7 @@ export default function AgentProgramPage() {
                 Built for Luxury Travel Professionals
               </h2>
               <p className="text-sm font-sans text-charcoal/70 dark:text-ivory/70 leading-relaxed mb-10">
-                StaySphere was built with travel professionals in mind. We understand that your reputation depends on the quality of what you recommend — which is why we offer only the finest inventory, backed by the support infrastructure that luxury bookings demand.
+                StaysVacation was built with travel professionals in mind. We understand that your reputation depends on the quality of what you recommend — which is why we offer only the finest inventory, backed by the support infrastructure that luxury bookings demand.
               </p>
 
               {/* Benefits */}
@@ -128,9 +130,9 @@ export default function AgentProgramPage() {
               </div>
             </div>
 
-            {/* Right: Registration Form */}
+            {/* Right: Login / Register Tabs */}
             <div>
-              <AgentRegistrationForm />
+              <AgentProgramTabs />
             </div>
           </div>
         </div>

@@ -488,6 +488,13 @@ const raw: R[] = [
   ["dxb", 1,  5,  2,  39574,  "Stunning 1BR with Palm and Sea Views"],
   ["dxb", 1,  1,  3,  32760,  "Chic High-Floor 1BR in The Greens | Skyline Views"],
   ["dxb", 2,  5,  4,  107446, "Luxury 2BR with Sea, Ain Dubai & Skyline Views"],
+  ["dxb", 1,  1,  2,  16232,  "1B by Marasi Drive Close to Downtown Attraction"],
+  ["dxb", 1,  2,  4,  23933,  "1BHK Coastal Living with Amazing Sea & Marina Views"],
+  ["dxb", 1,  2,  2,  43640,  "1BHK with Marina Views and Beach Access"],
+  ["dxb", 1,  2,  2,  25600,  "1BR Gem with Stunning Marina Views, Close to Metro"],
+  ["dxb", 1,  1,  2,  17133,  "1BR Retreat, Free Access to Creek Lagoon"],
+  ["dxb", 1,  2,  2,  17455,  "1BR with Balcony, Steps from JBR & Marina Walk"],
+  ["dxb", 3,  3,  5,  29361,  "2B & Maid in Dunya 5 Min Walk to Dubai Mall"],
 
   // ── BENGALURU ───────────────────────────────────────────────────────────────
   ["blr", 1,  1,  3,  40228,  "Tapovana Zarae | Pet-friendly Tent on 1-Acre with Shared Pool"],

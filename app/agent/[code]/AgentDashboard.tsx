@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   TrendingUp, Users, IndianRupee, Link as LinkIcon,
   Copy, Check, Send, UserPlus, Phone, Mail,
-  MessageCircle, X,
+  MessageCircle, X, Building2,
   Home, Edit2, Star, ShieldCheck, Clock, Shield, Wallet
 } from "lucide-react";
 import { properties } from "@/data/properties";
@@ -52,7 +52,7 @@ function KycLinkGenerator({ kycBaseUrl, onKycTab }: { kycBaseUrl: string; onKycT
   const [selectedProperty, setSelectedProperty] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const propertyOptions = properties.map(p => ({ value: p.title, label: `${p.title} — ${p.city}` }));
+  const propertyOptions = properties.map(p => ({ value: p.code ?? p.title, label: `${p.code ?? p.title} — ${p.city}` }));
 
   const kycLink = selectedProperty
     ? `${kycBaseUrl}&property=${encodeURIComponent(selectedProperty)}`
@@ -131,7 +131,7 @@ export function AgentDashboard({
   kycBaseUrl: string;
   kycRecords: KycRecord[];
 }) {
-  const [tab, setTab] = useState<"overview" | "leads" | "customers" | "send" | "kyc">("overview");
+  const [tab, setTab] = useState<"overview" | "properties" | "leads" | "customers" | "send" | "kyc">("overview");
   const [kycRecords] = useState<KycRecord[]>(initialKycRecords);
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [leadStatuses, setLeadStatuses] = useState<Record<string, string>>({});
@@ -145,6 +145,20 @@ export function AgentDashboard({
   const [sendCustomerId, setSendCustomerId] = useState("");
   const [searchProp, setSearchProp] = useState("");
   const [newCustomer, setNewCustomer] = useState({ name: "", phone: "", email: "", requirements: "", notes: "", status: "prospect" });
+  const [selectedProps, setSelectedProps] = useState<string[]>([]);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [propSearch, setPropSearch] = useState("");
+  const [propDestFilter, setPropDestFilter] = useState("");
+  const [shareIncludeBrochure, setShareIncludeBrochure] = useState<Record<string, boolean>>({});
+  const [viewingProp, setViewingProp] = useState<string | null>(null);
+  const [propFilters, setPropFilters] = useState<{
+    petFriendly: boolean; lakeView: boolean; beachView: boolean; mountainView: boolean; bhk: number | null;
+  }>({ petFriendly: false, lakeView: false, beachView: false, mountainView: false, bhk: null });
+
+  const toggleFilter = (key: keyof Omit<typeof propFilters, "bhk">) =>
+    setPropFilters(p => ({ ...p, [key]: !p[key] }));
+  const toggleBhk = (n: number) =>
+    setPropFilters(p => ({ ...p, bhk: p.bhk === n ? null : n }));
 
   // Load lead statuses from localStorage
   useEffect(() => {
@@ -206,15 +220,31 @@ export function AgentDashboard({
     setEditingCustomer(null);
   };
 
+  const toggleProp = (id: string) => {
+    setSelectedProps(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
+  };
+
+  const generateBulkMessage = () => {
+    const siteBase = "https://staysvacation.com";
+    const selected = properties.filter(p => selectedProps.includes(p.id));
+    const lines = selected.map((prop, i) => {
+      const propUrl = `${siteBase}/properties/${prop.slug}?ref=${code}`;
+      const includeBrochure = shareIncludeBrochure[prop.id] !== false;
+      const brochureUrl = `${siteBase}/properties/${prop.slug}/brochure?ref=${code}`;
+      return `${i + 1}. *${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n🔗 ${propUrl}${includeBrochure ? `\n📋 Brochure: ${brochureUrl}` : ""}`;
+    });
+    return `Hi! Here are some luxury villas I've curated for you:\n\n${lines.join("\n\n")}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know which one interests you most!`;
+  };
+
   const sendViaWhatsApp = () => {
     const phone = sendCustomerId
       ? customers.find(c => c.id === sendCustomerId)?.phone
       : sendPhone;
     const prop = properties.find(p => p.id === sendProperty || p.slug === sendProperty);
     if (!phone || !prop) return;
-    const siteBase = typeof window !== "undefined" ? window.location.origin.replace("/agent/" + code, "") : "https://staycove.in";
+    const siteBase = typeof window !== "undefined" ? window.location.origin.replace("/agent/" + code, "") : "https://staysvacation.com";
     const propUrl = `${siteBase}/properties/${prop.slug}?ref=${code}`;
-    const msg = `Hi! I'm sharing a luxury villa from StaySphere that matches your requirements:\n\n*${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\nLet me know if you'd like more details!`;
+    const msg = `Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
     const clean = phone.replace(/\D/g, "");
     const waPhone = clean.startsWith("91") ? clean : `91${clean}`;
     window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -229,8 +259,25 @@ export function AgentDashboard({
 
   const pendingKyc = kycRecords.filter(r => r.status === "pending").length;
 
+  const propTabFiltered = properties.filter(p => {
+    const q = propSearch.toLowerCase();
+    const title = p.title.toLowerCase();
+    const tags = p.tags ?? [];
+    const matchSearch = !q || title.includes(q) || p.city.toLowerCase().includes(q) || (p.code ?? "").toLowerCase().includes(q);
+    const matchDest = !propDestFilter || p.destination_slug === propDestFilter;
+    const matchPet = !propFilters.petFriendly || title.includes("pet") || tags.some(t => t.includes("pet"));
+    const matchLake = !propFilters.lakeView || title.includes("lake") || tags.some(t => t.includes("lake"));
+    const matchBeach = !propFilters.beachView || title.includes("beach") || tags.some(t => ["beach", "beachfront", "sea view", "ocean view"].includes(t));
+    const matchMountain = !propFilters.mountainView || tags.some(t => ["mountain", "mountains", "hills", "hill", "valley view", "hillside"].includes(t)) || title.includes("mountain") || title.includes("hill");
+    const matchBhk = !propFilters.bhk || (propFilters.bhk === 5 ? p.bedrooms >= 5 : p.bedrooms === propFilters.bhk);
+    return matchSearch && matchDest && matchPet && matchLake && matchBeach && matchMountain && matchBhk;
+  }).slice(0, 80);
+
+  const uniqueDestinations = Array.from(new Set(properties.map(p => p.destination_slug))).filter(Boolean).sort();
+
   const tabs = [
     { id: "overview", label: "Overview", icon: Home },
+    { id: "properties", label: "Properties", icon: Building2 },
     { id: "leads", label: `Leads (${leads.length})`, icon: TrendingUp },
     { id: "customers", label: `My Customers (${customers.length})`, icon: Users },
     { id: "send", label: "Send Property", icon: Send },
@@ -243,12 +290,18 @@ export function AgentDashboard({
       <div className="bg-white dark:bg-[#121212] border-b border-stone-200 dark:border-stone-800">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="font-serif text-lg font-light text-charcoal dark:text-ivory">StaySphere</Link>
+            <Link href="/" className="font-serif text-lg font-light text-charcoal dark:text-ivory">StaysVacation</Link>
             <span className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 bg-gold-500/10 px-2 py-1">Agent Portal</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <span className="font-mono text-[10px] text-charcoal/40 dark:text-ivory/40">{code}</span>
             {agent && <span className="text-sm font-sans text-charcoal/60 dark:text-ivory/60">{agent.name}</span>}
+            <Link
+              href="/agent-program"
+              className="text-[10px] font-sans font-medium tracking-[0.12em] uppercase text-charcoal/40 dark:text-ivory/40 hover:text-red-500 dark:hover:text-red-400 transition-colors border border-stone-200 dark:border-stone-800 px-3 py-1.5"
+            >
+              Sign Out
+            </Link>
           </div>
         </div>
 
@@ -387,7 +440,7 @@ export function AgentDashboard({
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {/* WhatsApp */}
                           {lead.phone && (
-                            <a href={`https://wa.me/91${lead.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${lead.name}, following up on your luxury stay enquiry with StaySphere!`)}`}
+                            <a href={`https://wa.me/91${lead.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${lead.name}, following up on your luxury stay enquiry with StaysVacation!`)}`}
                               target="_blank"
                               className="p-2 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors" title="WhatsApp">
                               <MessageCircle className="w-4 h-4" />
@@ -535,7 +588,7 @@ export function AgentDashboard({
                             return null;
                           })()}
                           {/* Send KYC link via WhatsApp */}
-                          <a href={`https://wa.me/91${customer.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${customer.name}, please complete your identity verification (KYC) before check-in by clicking this link: ${kycBaseUrl}&customer=${customer.id}\n\nThis is required for your StaySphere stay.`)}`}
+                          <a href={`https://wa.me/91${customer.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${customer.name}, please complete your identity verification (KYC) before check-in by clicking this link: ${kycBaseUrl}&customer=${customer.id}\n\nThis is required for your StaysVacation stay.`)}`}
                             target="_blank"
                             className="p-2 bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 transition-colors" title="Send KYC link">
                             <ShieldCheck className="w-4 h-4" />
@@ -562,6 +615,222 @@ export function AgentDashboard({
             )}
           </div>
         )}
+
+        {/* ── PROPERTIES ── */}
+        {tab === "properties" && (
+          <div>
+            {/* Search + filter + bulk send bar */}
+            <div className="flex flex-wrap gap-3 mb-4">
+              <input
+                value={propSearch}
+                onChange={e => setPropSearch(e.target.value)}
+                placeholder="Search by name, city, or code..."
+                className="input-luxury text-sm flex-1 min-w-[200px]"
+              />
+              <select
+                value={propDestFilter}
+                onChange={e => setPropDestFilter(e.target.value)}
+                className="input-luxury text-sm"
+              >
+                <option value="">All Destinations</option>
+                {uniqueDestinations.map(d => (
+                  <option key={d} value={d}>{d.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</option>
+                ))}
+              </select>
+              {selectedProps.length > 0 && (
+                <>
+                  <button onClick={() => setSelectedProps([])}
+                    className="px-4 py-2.5 border border-stone-200 dark:border-stone-700 text-xs font-sans text-charcoal/60 hover:text-charcoal uppercase tracking-wide transition-colors">
+                    Clear ({selectedProps.length})
+                  </button>
+                  <button onClick={() => { setShareIncludeBrochure({}); setShowShareModal(true); }}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gold-500 hover:bg-gold-600 text-white text-xs font-sans font-medium uppercase tracking-wide transition-colors">
+                    <Send className="w-3.5 h-3.5" /> Bulk Send ({selectedProps.length})
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Filter chips */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {([
+                { key: "petFriendly", label: "🐾 Pet Friendly" },
+                { key: "lakeView",    label: "🏞 Lake View" },
+                { key: "beachView",   label: "🏖 Beach View" },
+                { key: "mountainView",label: "⛰ Mountain View" },
+              ] as const).map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  className={`px-3 py-1.5 text-xs font-sans font-medium transition-colors border ${propFilters[key] ? "bg-gold-500 border-gold-500 text-white" : "border-stone-200 dark:border-stone-700 text-charcoal/60 dark:text-ivory/60 hover:border-gold-400 hover:text-gold-600"}`}
+                >
+                  {label}
+                </button>
+              ))}
+              <div className="flex items-center gap-1 ml-1">
+                {[1, 2, 3, 4, 5].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => toggleBhk(n)}
+                    className={`px-3 py-1.5 text-xs font-sans font-medium transition-colors border ${propFilters.bhk === n ? "bg-charcoal dark:bg-ivory text-white dark:text-charcoal border-charcoal dark:border-ivory" : "border-stone-200 dark:border-stone-700 text-charcoal/60 dark:text-ivory/60 hover:border-stone-400"}`}
+                  >
+                    {n === 5 ? "5+ BHK" : `${n} BHK`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-xs font-sans text-charcoal/40 mb-4">
+              Showing {propTabFiltered.length} of {properties.length} properties · Click to open · Check box to bulk send
+            </p>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {propTabFiltered.map(prop => {
+                const isSelected = selectedProps.includes(prop.id);
+                return (
+                  <div
+                    key={prop.id}
+                    onClick={() => setViewingProp(prop.id)}
+                    className={`relative bg-white dark:bg-[#121212] border cursor-pointer transition-all duration-200 overflow-hidden group ${isSelected ? "border-gold-500" : "border-stone-200/60 dark:border-stone-800/60 hover:border-stone-300 dark:hover:border-stone-700"}`}
+                  >
+                    {/* Checkbox — click to select for bulk, does NOT open */}
+                    <div
+                      onClick={e => { e.stopPropagation(); toggleProp(prop.id); }}
+                      className={`absolute top-3 right-3 z-10 w-5 h-5 flex items-center justify-center border-2 transition-colors shadow-sm ${isSelected ? "bg-gold-500 border-gold-500" : "bg-white/90 border-stone-300 hover:border-gold-400"}`}
+                    >
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
+                    </div>
+
+                    {/* Image */}
+                    {prop.images?.[0] && (
+                      <div className="relative h-44 overflow-hidden">
+                        <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        {prop.featured && (
+                          <span className="absolute top-3 left-3 text-[9px] font-sans font-medium tracking-[0.15em] uppercase bg-gold-500 text-white px-2 py-0.5">
+                            Featured
+                          </span>
+                        )}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-gold-500/10" />
+                        )}
+                      </div>
+                    )}
+
+                    {/* Info */}
+                    <div className="p-4">
+                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory mb-0.5 pr-6 leading-tight">{prop.code ?? prop.title}</p>
+                      <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-3">📍 {prop.city}, {prop.country}</p>
+                      <div className="flex items-center gap-3 text-[10px] font-sans text-charcoal/50 dark:text-ivory/50">
+                        <span>🛏 {prop.bedrooms} bed</span>
+                        <span>🛁 {prop.bathrooms} bath</span>
+                        <span>👥 {prop.max_guests}</span>
+                        {prop.has_pool && <span className="text-blue-500">Pool</span>}
+                      </div>
+                      {prop.code && (
+                        <p className="font-mono text-[10px] text-charcoal/30 dark:text-ivory/30 mt-2">{prop.code}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── PROPERTY DETAIL MODAL ── */}
+        {viewingProp && (() => {
+          const prop = properties.find(p => p.id === viewingProp);
+          if (!prop) return null;
+          const propUrl = `https://staysvacation.com/properties/${prop.slug}?ref=${code}`;
+          const brochureUrl = `/properties/${prop.slug}/brochure`;
+          const waMsg = `Hi! Here's a luxury villa I'd like to share with you:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n📋 Brochure: https://staysvacation.com${brochureUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
+          return (
+            <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center" onClick={() => setViewingProp(null)}>
+              <div className="bg-white dark:bg-[#121212] w-full sm:max-w-2xl sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                {/* Hero image carousel (show first 3) */}
+                {prop.images?.[0] && (
+                  <div className="relative h-56 sm:h-72 overflow-hidden">
+                    <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <button onClick={() => setViewingProp(null)} className="absolute top-4 right-4 w-8 h-8 bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors">
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <p className="text-white font-serif text-xl font-light">{prop.code ?? prop.title}</p>
+                      <p className="text-white/70 text-xs mt-1">📍 {prop.city}, {prop.country}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Thumbnail strip */}
+                {prop.images && prop.images.length > 1 && (
+                  <div className="flex gap-1.5 px-4 pt-3">
+                    {prop.images.slice(1, 5).map((img, i) => (
+                      <img key={i} src={img} alt="" className="w-16 h-12 object-cover flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity" />
+                    ))}
+                    {prop.images.length > 5 && (
+                      <div className="w-16 h-12 bg-stone-100 dark:bg-stone-800 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-sans text-charcoal/50">+{prop.images.length - 5}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Details */}
+                <div className="px-5 py-4">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex-1">
+                      {prop.code && <p className="font-mono text-[10px] text-charcoal/40 dark:text-ivory/40 mb-1">{prop.code}</p>}
+                      <div className="flex flex-wrap gap-4 text-xs font-sans text-charcoal/60 dark:text-ivory/60">
+                        <span>🛏 {prop.bedrooms} Bedrooms</span>
+                        <span>🛁 {prop.bathrooms} Bathrooms</span>
+                        <span>👥 Up to {prop.max_guests} guests</span>
+                        {prop.has_pool && <span className="text-blue-500">🏊 Private Pool</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {prop.short_description && (
+                    <p className="text-sm font-sans text-charcoal/70 dark:text-ivory/70 leading-relaxed mb-4">{prop.short_description}</p>
+                  )}
+
+                  {prop.highlights && prop.highlights.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-gold-600 mb-2">Highlights</p>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {prop.highlights.slice(0, 4).map(h => (
+                          <p key={h} className="text-xs font-sans text-charcoal/60 dark:text-ivory/60 flex items-start gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-gold-500 mt-1.5 flex-shrink-0" />
+                            {h}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-3 px-5 pb-5 border-t border-stone-100 dark:border-stone-900 pt-4">
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(waMsg)}`}
+                    target="_blank"
+                    className="flex items-center gap-2 flex-1 justify-center px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-sans font-medium transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" /> Send to Client
+                  </a>
+                  <a
+                    href={brochureUrl}
+                    target="_blank"
+                    className="flex items-center gap-2 justify-center px-4 py-3 border border-stone-200 dark:border-stone-700 text-sm font-sans text-charcoal dark:text-ivory hover:border-gold-400 hover:text-gold-600 transition-colors"
+                  >
+                    <Send className="w-4 h-4" /> Brochure PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ── KYC RECORDS ── */}
         {tab === "kyc" && (
@@ -664,7 +933,7 @@ export function AgentDashboard({
                   <option value="">— Select a property —</option>
                   {filteredProperties.map(p => (
                     <option key={p.id} value={p.id}>
-                      {p.code ? `${p.code} · ` : ""}{p.title} · {p.city}
+                      {p.code ?? p.title} · {p.city}
                     </option>
                   ))}
                 </select>
@@ -674,13 +943,13 @@ export function AgentDashboard({
               {sendProperty && (() => {
                 const prop = properties.find(p => p.id === sendProperty);
                 if (!prop) return null;
-                const siteBase = typeof window !== "undefined" ? window.location.origin.replace(`/agent/${code}`, "") : "https://staycove.in";
+                const siteBase = typeof window !== "undefined" ? window.location.origin.replace(`/agent/${code}`, "") : "https://staysvacation.com";
                 const propUrl = `${siteBase}/properties/${prop.slug}?ref=${code}`;
                 return (
                   <div className="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4">
                     <p className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 mb-2">Message Preview</p>
                     <p className="text-xs font-sans text-charcoal/70 dark:text-ivory/70 whitespace-pre-line leading-relaxed">
-                      {`Hi! I'm sharing a luxury villa from StaySphere that matches your requirements:\n\n*${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\nLet me know if you'd like more details!`}
+                      {`Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`}
                     </p>
                   </div>
                 );
@@ -701,6 +970,67 @@ export function AgentDashboard({
           </div>
         )}
       </div>
+
+      {/* ── SHARE MODAL ── */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setShowShareModal(false)}>
+          <div className="bg-white dark:bg-[#121212] w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-stone-100 dark:border-stone-900">
+              <div>
+                <h3 className="font-serif text-lg font-light text-charcoal dark:text-ivory">Share with your client</h3>
+                <p className="text-xs font-sans text-charcoal/50 mt-0.5">{selectedProps.length} {selectedProps.length === 1 ? "property" : "properties"} selected</p>
+              </div>
+              <button onClick={() => setShowShareModal(false)} className="text-charcoal/40 hover:text-charcoal">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Property rows */}
+            <div className="divide-y divide-stone-100 dark:divide-stone-900">
+              {properties.filter(p => selectedProps.includes(p.id)).map(prop => {
+                const includeBrochure = shareIncludeBrochure[prop.id] !== false;
+                return (
+                  <div key={prop.id} className="flex items-center gap-4 px-6 py-4">
+                    {prop.images?.[0] && (
+                      <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-16 h-12 object-cover flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory truncate">{prop.code ?? prop.title}</p>
+                      <p className="text-xs font-sans text-charcoal/50">📍 {prop.city} · 🛏 {prop.bedrooms} bed · 👥 {prop.max_guests}</p>
+                    </div>
+                    {/* Brochure toggle */}
+                    <label className="flex items-center gap-2 cursor-pointer flex-shrink-0">
+                      <div
+                        onClick={() => setShareIncludeBrochure(prev => ({ ...prev, [prop.id]: !includeBrochure }))}
+                        className={`w-4 h-4 flex items-center justify-center border-2 transition-colors ${includeBrochure ? "bg-gold-500 border-gold-500" : "bg-white border-stone-300"}`}
+                      >
+                        {includeBrochure && <Check className="w-2.5 h-2.5 text-white" />}
+                      </div>
+                      <span className="text-xs font-sans text-charcoal/60">Brochure</span>
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 px-6 py-5 border-t border-stone-100 dark:border-stone-900">
+              <button
+                onClick={() => { navigator.clipboard.writeText(generateBulkMessage()); }}
+                className="flex items-center gap-2 flex-1 justify-center px-5 py-3 border border-stone-200 dark:border-stone-700 text-sm font-sans text-charcoal dark:text-ivory hover:border-stone-400 transition-colors">
+                <Copy className="w-4 h-4" /> Copy Message
+              </button>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(generateBulkMessage())}`}
+                target="_blank"
+                className="flex items-center gap-2 flex-1 justify-center px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-sans font-medium transition-colors">
+                <MessageCircle className="w-4 h-4" /> Share on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

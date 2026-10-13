@@ -15,13 +15,13 @@ const navItems = [
       { label: "Udaipur", href: "/destinations/udaipur" },
       { label: "Goa", href: "/destinations/goa" },
       { label: "Jaipur", href: "/destinations/jaipur" },
-      { label: "Jodhpur", href: "/destinations/jodhpur" },
+      { label: "Delhi NCR", href: "/destinations/delhi-ncr" },
       { label: "Kasauli", href: "/destinations/kasauli" },
       { label: "Mussoorie", href: "/destinations/mussoorie" },
       { label: "Lonavala", href: "/destinations/lonavala" },
       { label: "Alibaug", href: "/destinations/alibaug" },
       { label: "Dubai", href: "/destinations/dubai" },
-      { label: "Bali", href: "/destinations/bali" },
+      { label: "Bengaluru", href: "/destinations/bengaluru" },
     ],
   },
   { label: "Experiences", href: "/experiences" },
@@ -77,7 +77,7 @@ export function Navbar() {
                   : "text-white"
               )}
             >
-              StaySphere
+              StaysVacation
             </span>
             <span
               className={cn(

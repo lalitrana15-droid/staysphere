@@ -41,7 +41,7 @@ export function BrandPillars() {
         <div className="flex items-center gap-6">
           <div className="h-px flex-1 bg-gold-500/20" />
           <p className="text-[10px] font-sans font-medium tracking-[0.25em] uppercase text-gold-400">
-            The StaySphere Difference
+            The StaysVacation Difference
           </p>
           <div className="h-px flex-1 bg-gold-500/20" />
         </div>

@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "Do you offer travel agent or B2B partnerships?",
     answer:
-      "We have a dedicated Agent Program offering B2B pricing, priority support, and a dedicated account manager. Visit our Agent Program page or email us to learn more about partnering with StaySphere.",
+      "We have a dedicated Agent Program offering B2B pricing, priority support, and a dedicated account manager. Visit our Agent Program page or email us to learn more about partnering with StaysVacation.",
   },
   {
     question: "What is included in the pricing?",
@@ -26,7 +26,7 @@ const faqs = [
       "Our pricing is bespoke to each booking. Most of our properties are priced on request, as pricing varies by dates, group size, and any additional services. Contact us for a tailored quote.",
   },
   {
-    question: "Can I list my luxury property on StaySphere?",
+    question: "Can I list my luxury property on StaysVacation?",
     answer:
       "If you own or manage a luxury property that meets our quality standards, we would love to hear from you. Visit our Owner Partnership page to submit your property for consideration.",
   },

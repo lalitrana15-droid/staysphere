@@ -55,22 +55,6 @@ export const destinations: Destination[] = [
     best_time_to_visit: "October to March",
   },
   {
-    id: "4",
-    slug: "jodhpur",
-    name: "Jodhpur",
-    country: "India",
-    state: "Rajasthan",
-    description:
-      "The Blue City rises dramatically from the Thar Desert. Jodhpur's magnificent Mehrangarh Fort dominates the skyline while below, a labyrinth of blue-washed homes and ancient temples await discovery.",
-    short_description: "The Blue City with its magnificent desert fortress",
-    hero_image:
-      "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1920&q=90",
-    gallery_images: [],
-    featured: true,
-    highlights: ["Mehrangarh Fort", "Jaswant Thada", "Umaid Bhawan Palace", "Thar Desert"],
-    best_time_to_visit: "October to February",
-  },
-  {
     id: "5",
     slug: "kasauli",
     name: "Kasauli",
@@ -148,21 +132,6 @@ export const destinations: Destination[] = [
     featured: true,
     highlights: ["Palm Jumeirah", "Burj Khalifa", "Dubai Marina", "Desert Safari"],
     best_time_to_visit: "November to April",
-  },
-  {
-    id: "10",
-    slug: "bali",
-    name: "Bali",
-    country: "Indonesia",
-    description:
-      "The Island of the Gods offers a spiritual luxury unlike anywhere on earth. Private infinity pools overlooking rice terraces, ancient temple ceremonies, and world-class cuisine make Bali an eternal draw for luxury travellers.",
-    short_description: "The Island of Gods — spiritual luxury and tropical perfection",
-    hero_image:
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=90",
-    gallery_images: [],
-    featured: true,
-    highlights: ["Ubud Rice Terraces", "Seminyak", "Tanah Lot", "Mount Batur"],
-    best_time_to_visit: "April to October",
   },
   {
     id: "11",

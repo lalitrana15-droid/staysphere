@@ -4,7 +4,7 @@ import { properties } from "@/data/properties";
 import { experiences } from "@/data/experiences";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://staysphere.com";
+  const baseUrl = "https://staysvacation.com";
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },

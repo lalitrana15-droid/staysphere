@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, Download, Calendar, BedDouble, Bath, Users, Eye } from "lucide-react";
+import { FileText, BedDouble, Bath, Users, Eye } from "lucide-react";
 import { properties } from "@/data/properties";
 
 export default function AgentToolsPage() {
@@ -19,7 +19,7 @@ export default function AgentToolsPage() {
           Agent Tools
         </h1>
         <p className="text-sm font-sans text-charcoal/60 dark:text-ivory/60 mt-1">
-          Generate branded or unbranded PDF brochures and download ICS files for all {properties.length} properties
+          Generate branded or unbranded PDF brochures for all {properties.length} properties
         </p>
       </div>
 
@@ -27,15 +27,11 @@ export default function AgentToolsPage() {
       <div className="flex flex-wrap items-center gap-6 mb-8 p-5 bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60">
         <div className="flex items-center gap-2 text-xs font-sans text-charcoal/70 dark:text-ivory/70">
           <FileText className="w-4 h-4 text-gold-500" />
-          <span>Branded PDF — includes StaySphere logo &amp; contact details</span>
+          <span>Branded PDF — includes StaysVacation logo &amp; contact details</span>
         </div>
         <div className="flex items-center gap-2 text-xs font-sans text-charcoal/70 dark:text-ivory/70">
           <FileText className="w-4 h-4 text-charcoal/50 dark:text-ivory/50" />
           <span>Unbranded PDF — agent copy, no brand marks</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-sans text-charcoal/70 dark:text-ivory/70">
-          <Calendar className="w-4 h-4 text-blue-400" />
-          <span>ICS — calendar file for property enquiry</span>
         </div>
       </div>
 
@@ -98,7 +94,7 @@ export default function AgentToolsPage() {
                           </div>
                           <div>
                             <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory leading-snug">
-                              {p.title}
+                              {p.code ?? p.title}
                             </p>
                             <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 capitalize">
                               {p.property_type}
@@ -161,16 +157,6 @@ export default function AgentToolsPage() {
                             Unbranded
                           </Link>
 
-                          {/* ICS Download */}
-                          <a
-                            href={`/api/properties/${p.slug}/ics`}
-                            download={`${p.slug}.ics`}
-                            title="Download ICS"
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[10px] font-sans font-medium tracking-wide uppercase transition-colors"
-                          >
-                            <Calendar className="w-3 h-3" />
-                            ICS
-                          </a>
                         </div>
                       </td>
                     </tr>

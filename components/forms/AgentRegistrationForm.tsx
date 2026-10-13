@@ -168,7 +168,7 @@ export function AgentRegistrationForm() {
         <div>
           <textarea
             {...register("message")}
-            placeholder="Tell us about your business, specialisations, and why you want to partner with StaySphere"
+            placeholder="Tell us about your business, specialisations, and why you want to partner with StaysVacation"
             rows={4}
             className="input-luxury resize-none"
           />

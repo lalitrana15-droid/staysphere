@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `villa rental ${destination.name}`,
     ],
     openGraph: {
-      title: `Luxury Villas in ${destination.name} | StaySphere`,
+      title: `Luxury Villas in ${destination.name} | StaysVacation`,
       description: destination.description,
       images: [{ url: destination.hero_image }],
     },

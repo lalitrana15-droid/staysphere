@@ -7,7 +7,7 @@ export const experiences: Experience[] = [
     title: "Luxury Weddings",
     category: "weddings",
     description:
-      "Transform your wedding into an extraordinary saga set against the backdrop of India's most breathtaking destinations. From intimate ceremonies on Udaipur lakefronts to grand Rajasthani celebrations in historic forts, StaySphere curates wedding experiences that transcend the ordinary.",
+      "Transform your wedding into an extraordinary saga set against the backdrop of India's most breathtaking destinations. From intimate ceremonies on Udaipur lakefronts to grand Rajasthani celebrations in historic forts, StaysVacation curates wedding experiences that transcend the ordinary.",
     short_description: "Extraordinary destination weddings in India's most breathtaking settings",
     image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=90",
     featured: true,

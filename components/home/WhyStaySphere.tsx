@@ -39,7 +39,7 @@ const features = [
   },
 ];
 
-export function WhyStaySphere() {
+export function WhyStaysVacation() {
   return (
     <section className="section-padding bg-white dark:bg-[#0D0D0D]">
       <div className="luxury-container">
@@ -47,7 +47,7 @@ export function WhyStaySphere() {
         <div className="text-center mb-20">
           <p className="label-text mb-4">The Difference</p>
           <h2 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory mb-5">
-            Why StaySphere
+            Why StaysVacation
           </h2>
           <div className="luxury-divider" />
         </div>

@@ -7,7 +7,7 @@ import { experiences } from "@/data/experiences";
 export const metadata: Metadata = {
   title: "Luxury Experiences — Weddings, Retreats & Private Events",
   description:
-    "Extraordinary experiences beyond the stay. Luxury weddings, corporate retreats, creator escapes, private dining, and wellness retreats curated by StaySphere.",
+    "Extraordinary experiences beyond the stay. Luxury weddings, corporate retreats, creator escapes, private dining, and wellness retreats curated by StaysVacation.",
 };
 
 const categoryLabels: Record<string, string> = {
