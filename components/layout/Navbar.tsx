@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -18,8 +18,7 @@ const navItems = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const { theme, setTheme } = useTheme();
+const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
@@ -79,47 +78,21 @@ export function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => (
-              <div
+              <Link
                 key={item.label}
-                className="relative"
-                onMouseEnter={() => item.children && setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-1 text-[11px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200",
-                    scrolled || !isHome
-                      ? "text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 dark:hover:text-gold-400"
-                      : "text-white/80 hover:text-white",
-                    pathname === item.href &&
-                      (scrolled || !isHome)
-                      ? "text-gold-600 dark:text-gold-400"
-                      : ""
-                  )}
-                >
-                  {item.label}
-                  {item.children && (
-                    <ChevronDown className="w-3 h-3 opacity-60" />
-                  )}
-                </Link>
-
-                {item.children && activeDropdown === item.label && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4">
-                    <div className="bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 shadow-luxury py-2 w-44">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block px-5 py-2 text-[11px] font-sans font-medium tracking-[0.1em] uppercase text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-stone-50 dark:hover:bg-stone-900/50 transition-all duration-150"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                href={item.href}
+                className={cn(
+                  "text-[11px] font-sans font-medium tracking-[0.15em] uppercase transition-all duration-200",
+                  scrolled || !isHome
+                    ? "text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 dark:hover:text-gold-400"
+                    : "text-white/80 hover:text-white",
+                  pathname === item.href && (scrolled || !isHome)
+                    ? "text-gold-600 dark:text-gold-400"
+                    : ""
                 )}
-              </div>
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
 
@@ -185,27 +158,13 @@ export function Navbar() {
         <div className="bg-white dark:bg-[#0A0A0A] border-t border-stone-200/60 dark:border-stone-800/60 px-6 py-6">
           <div className="space-y-1">
             {navItems.map((item) => (
-              <div key={item.label}>
-                <Link
-                  href={item.href}
-                  className="block py-3 text-sm font-sans font-medium tracking-[0.1em] uppercase text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 dark:hover:text-gold-400 border-b border-stone-100 dark:border-stone-900 transition-colors duration-200"
-                >
-                  {item.label}
-                </Link>
-                {item.children && (
-                  <div className="pl-4 space-y-1 py-2">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className="block py-2 text-xs font-sans tracking-[0.08em] uppercase text-charcoal/50 dark:text-ivory/50 hover:text-gold-600 dark:hover:text-gold-400 transition-colors duration-200"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <Link
+                key={item.label}
+                href={item.href}
+                className="block py-3 text-sm font-sans font-medium tracking-[0.1em] uppercase text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 dark:hover:text-gold-400 border-b border-stone-100 dark:border-stone-900 transition-colors duration-200"
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
           <div className="mt-6">
