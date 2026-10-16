@@ -1882,7 +1882,55 @@ const staySphereProperties: Property[] = [
   },
 ];
 
-export const properties: Property[] = elivaasProperties;
+const corum8Properties: Property[] = [
+  {
+    id: "corum8-mansion-001",
+    slug: "corum8-mansion-udaipur",
+    code: "SC-COR-001",
+    title: "Corum8 Mansion",
+    destination_id: "1",
+    destination_slug: "udaipur",
+    city: "Udaipur",
+    state: "Rajasthan",
+    country: "India",
+    bedrooms: 4,
+    bathrooms: 4,
+    max_guests: 10,
+    has_pool: true,
+    property_type: "villa",
+    description:
+      "A private hilltop mansion minutes from Udaipur city, looking out over the Aravalli valley. Four suites open onto an infinity pool and rooftop deck, with a live-in chef, yoga and spa deck, and grounds built for everything from family gatherings to corporate offsites.",
+    short_description:
+      "Private hilltop mansion with infinity pool, rooftop deck & in-house chef overlooking the Aravalli valley",
+    amenities: [
+      "Infinity Pool",
+      "Jacuzzi",
+      "Rooftop Deck",
+      "Yoga Deck",
+      "Bonfire Pit",
+      "Gym",
+      "WiFi",
+      "Air Conditioning",
+      "Television",
+      "Bed Linen & Towels",
+      "Daily Housekeeping",
+      "First Aid Kit",
+      "Fire Extinguisher",
+      "Parking",
+      "In-house Chef",
+      "Concierge Service",
+      "Scenic Views",
+    ],
+    images: Array.from({ length: 44 }, (_, i) =>
+      `https://villabase.imagesque.com/photoshoots/corum8-mansion/${String(i + 1).padStart(2, "0")}.jpg`
+    ),
+    featured: true,
+    price_on_request: false,
+    starting_price: 40000,
+  },
+];
+
+export const properties: Property[] = [...elivaasProperties, ...corum8Properties];
 
 export function getPropertiesByDestination(destinationSlug: string): Property[] {
   return properties.filter((p) => p.destination_slug === destinationSlug);

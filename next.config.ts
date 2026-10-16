@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cpjlcwamma.cloudimg.io",
       },
+      {
+        protocol: "https",
+        hostname: "villabase.imagesque.com",
+      },
     ],
   },
   experimental: {
