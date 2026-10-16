@@ -7,12 +7,28 @@ import Image from "next/image";
 import { BedDouble, Bath, Users, MapPin, ChevronDown, Search, Calendar } from "lucide-react";
 import { properties } from "@/data/properties";
 
+// Normalise Goa: merge "North Goa" / "South Goa" into "Goa" for display
+function normaliseCity(city: string): string {
+  if (city === "North Goa" || city === "South Goa") return "Goa";
+  return city;
+}
+function cityMatches(propertyCity: string, selected: string): boolean {
+  if (propertyCity === selected) return true;
+  if (normaliseCity(propertyCity) === selected) return true;
+  return false;
+}
+
 const allDestinations = Array.from(
   new Map(
-    properties.map((p) => [p.city, { city: p.city, state: p.state, count: 0 }])
+    properties.map((p) => {
+      const city = normaliseCity(p.city);
+      return [city, { city, state: p.state, count: 0 }];
+    })
   ).values()
-).map((d) => ({ ...d, count: properties.filter((p) => p.city === d.city).length }))
-  .sort((a, b) => a.city.localeCompare(b.city));
+).map((d) => ({
+  ...d,
+  count: properties.filter((p) => normaliseCity(p.city) === d.city).length,
+})).sort((a, b) => a.city.localeCompare(b.city));
 
 export default function VillasPage() {
   return (
@@ -80,7 +96,7 @@ function VillasContent() {
 
   const filtered = useMemo(() => {
     let list = properties;
-    if (selectedCity) list = list.filter((p) => p.city === selectedCity);
+    if (selectedCity) list = list.filter((p) => cityMatches(p.city, selectedCity));
     if (guests > 0) list = list.filter((p) => p.max_guests >= guests);
     return list;
   }, [selectedCity, guests]);
