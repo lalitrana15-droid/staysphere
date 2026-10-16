@@ -1922,7 +1922,7 @@ const corum8Properties: Property[] = [
       "Scenic Views",
     ],
     images: Array.from({ length: 44 }, (_, i) =>
-      `https://villabase.imagesque.com/photoshoots/corum8-mansion/${String(i + 1).padStart(2, "0")}.jpg`
+      `/photoshoots/corum8-mansion/${String(i + 1).padStart(2, "0")}.jpg`
     ),
     featured: true,
     price_on_request: false,
