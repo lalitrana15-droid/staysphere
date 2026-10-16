@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Search, MapPin, ChevronDown } from "lucide-react";
+import { Search, MapPin, ChevronDown, Calendar } from "lucide-react";
 import { destinations } from "@/data/destinations";
 
 const heroImages = [
@@ -14,9 +14,12 @@ const heroImages = [
 ];
 
 export function HeroSection() {
+  const router = useRouter();
   const [currentImage, setCurrentImage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [guestCount, setGuestCount] = useState("");
+  const [destination, setDestination] = useState("");
+  const [checkin, setCheckin] = useState("");
+  const [checkout, setCheckout] = useState("");
+  const [guests, setGuests] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,6 +27,19 @@ export function HeroSection() {
     }, 6000);
     return () => clearInterval(interval);
   }, []);
+
+  const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
+
+  function handleSearch() {
+    const params = new URLSearchParams();
+    if (destination) params.set("city", destination);
+    if (checkin) params.set("checkin", checkin);
+    if (checkout) params.set("checkout", checkout);
+    if (guests) params.set("guests", guests);
+    const qs = params.toString();
+    router.push(qs ? `/properties?${qs}` : "/properties");
+  }
 
   return (
     <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
@@ -71,19 +87,20 @@ export function HeroSection() {
         </p>
 
         {/* Search Box */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-2">
             <div className="flex flex-col md:flex-row gap-0">
+
               {/* Destination */}
-              <div className="flex-1 flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200 cursor-pointer group">
+              <div className="flex-1 flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200 border-b md:border-b-0 md:border-r border-white/20">
                 <MapPin className="w-4 h-4 text-gold-300 flex-shrink-0" />
                 <div className="flex-1 text-left">
                   <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-white/50 mb-0.5">
                     Destination
                   </p>
                   <select
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
                     className="w-full bg-transparent text-white text-sm font-sans font-light focus:outline-none cursor-pointer appearance-none"
                   >
                     <option value="" className="text-charcoal bg-white">
@@ -92,39 +109,69 @@ export function HeroSection() {
                     {destinations.map((dest) => (
                       <option
                         key={dest.slug}
-                        value={dest.slug}
+                        value={dest.name}
                         className="text-charcoal bg-white"
                       >
-                        {dest.name}, {dest.country}
+                        {dest.name}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="hidden md:block w-px bg-white/20" />
+              {/* Check-in */}
+              <div className="flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200 border-b md:border-b-0 md:border-r border-white/20 md:w-44">
+                <Calendar className="w-4 h-4 text-gold-300 flex-shrink-0" />
+                <div className="flex-1 text-left">
+                  <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-white/50 mb-0.5">
+                    Check-in
+                  </p>
+                  <input
+                    type="date"
+                    value={checkin}
+                    min={today}
+                    onChange={(e) => {
+                      setCheckin(e.target.value);
+                      if (checkout && e.target.value >= checkout) setCheckout("");
+                    }}
+                    className="w-full bg-transparent text-white text-sm font-sans font-light focus:outline-none cursor-pointer [color-scheme:dark]"
+                  />
+                </div>
+              </div>
+
+              {/* Check-out */}
+              <div className="flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200 border-b md:border-b-0 md:border-r border-white/20 md:w-44">
+                <Calendar className="w-4 h-4 text-gold-300 flex-shrink-0" />
+                <div className="flex-1 text-left">
+                  <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-white/50 mb-0.5">
+                    Check-out
+                  </p>
+                  <input
+                    type="date"
+                    value={checkout}
+                    min={checkin || tomorrow}
+                    onChange={(e) => setCheckout(e.target.value)}
+                    className="w-full bg-transparent text-white text-sm font-sans font-light focus:outline-none cursor-pointer [color-scheme:dark]"
+                  />
+                </div>
+              </div>
 
               {/* Guests */}
-              <div className="flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200">
+              <div className="flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/15 transition-colors duration-200 border-b md:border-b-0 md:border-r border-white/20 md:w-40">
                 <div className="flex-1 text-left">
                   <p className="text-[9px] font-sans font-medium tracking-[0.2em] uppercase text-white/50 mb-0.5">
                     Guests
                   </p>
                   <select
-                    value={guestCount}
-                    onChange={(e) => setGuestCount(e.target.value)}
+                    value={guests}
+                    onChange={(e) => setGuests(e.target.value)}
                     className="w-full bg-transparent text-white text-sm font-sans font-light focus:outline-none cursor-pointer appearance-none"
                   >
                     <option value="" className="text-charcoal bg-white">
-                      How many guests?
+                      How many?
                     </option>
                     {[2, 4, 6, 8, 10, 12, 15, "15+"].map((n) => (
-                      <option
-                        key={n}
-                        value={n}
-                        className="text-charcoal bg-white"
-                      >
+                      <option key={n} value={n} className="text-charcoal bg-white">
                         {n} guests
                       </option>
                     ))}
@@ -133,17 +180,13 @@ export function HeroSection() {
               </div>
 
               {/* Search Button */}
-              <Link
-                href={
-                  searchQuery
-                    ? `/destinations/${searchQuery}`
-                    : "/destinations"
-                }
+              <button
+                onClick={handleSearch}
                 className="flex items-center justify-center gap-2 px-8 py-3 bg-gold-500 hover:bg-gold-600 text-white text-sm font-sans font-medium tracking-[0.1em] uppercase transition-all duration-300"
               >
                 <Search className="w-4 h-4" />
                 Explore
-              </Link>
+              </button>
             </div>
           </div>
         </div>

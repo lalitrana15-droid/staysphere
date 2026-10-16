@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,10 +32,21 @@ export function BookingEnquiryForm({ propertyTitle, propertySlug }: BookingEnqui
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkin = params.get("checkin");
+    const checkout = params.get("checkout");
+    const guests = params.get("guests");
+    if (checkin) setValue("check_in", checkin);
+    if (checkout) setValue("check_out", checkout);
+    if (guests) setValue("guests", guests);
+  }, [setValue]);
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);

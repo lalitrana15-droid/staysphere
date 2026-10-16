@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Users, MapPin, ChevronDown, Search } from "lucide-react";
+import { BedDouble, Bath, Users, MapPin, ChevronDown, Search, Calendar } from "lucide-react";
 import { properties } from "@/data/properties";
 
 const allDestinations = Array.from(
@@ -28,6 +28,8 @@ function VillasContent() {
 
   const [selectedCity, setSelectedCity] = useState<string>(searchParams.get("city") ?? "");
   const [guests, setGuests] = useState<number>(parseInt(searchParams.get("guests") ?? "0") || 0);
+  const [checkin, setCheckin] = useState<string>(searchParams.get("checkin") ?? "");
+  const [checkout, setCheckout] = useState<string>(searchParams.get("checkout") ?? "");
   const [destOpen, setDestOpen] = useState(false);
   const [destSearch, setDestSearch] = useState("");
   const destRef = useRef<HTMLDivElement>(null);
@@ -35,6 +37,8 @@ function VillasContent() {
   useEffect(() => {
     setSelectedCity(searchParams.get("city") ?? "");
     setGuests(parseInt(searchParams.get("guests") ?? "0") || 0);
+    setCheckin(searchParams.get("checkin") ?? "");
+    setCheckout(searchParams.get("checkout") ?? "");
   }, [searchParams]);
 
   useEffect(() => {
@@ -52,13 +56,26 @@ function VillasContent() {
     d.city.toLowerCase().includes(destSearch.toLowerCase())
   );
 
+  const today = new Date().toISOString().split("T")[0];
+
   function applySearch() {
     const params = new URLSearchParams();
     if (selectedCity) params.set("city", selectedCity);
+    if (checkin) params.set("checkin", checkin);
+    if (checkout) params.set("checkout", checkout);
     if (guests > 0) params.set("guests", String(guests));
     const qs = params.toString();
     router.replace(qs ? `/properties?${qs}` : "/properties", { scroll: false });
     setDestOpen(false);
+  }
+
+  function propertyHref(slug: string) {
+    const params = new URLSearchParams();
+    if (checkin) params.set("checkin", checkin);
+    if (checkout) params.set("checkout", checkout);
+    if (guests > 0) params.set("guests", String(guests));
+    const qs = params.toString();
+    return qs ? `/properties/${slug}?${qs}` : `/properties/${slug}`;
   }
 
   const filtered = useMemo(() => {
@@ -67,6 +84,11 @@ function VillasContent() {
     if (guests > 0) list = list.filter((p) => p.max_guests >= guests);
     return list;
   }, [selectedCity, guests]);
+
+  function formatDate(d: string) {
+    if (!d) return "";
+    return new Date(d + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]">
@@ -132,8 +154,41 @@ function VillasContent() {
               )}
             </div>
 
+            {/* Check-in */}
+            <div className="flex items-center gap-2 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
+              <Calendar className="w-4 h-4 text-gold-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Check-in</p>
+                <input
+                  type="date"
+                  value={checkin}
+                  min={today}
+                  onChange={(e) => {
+                    setCheckin(e.target.value);
+                    if (checkout && e.target.value >= checkout) setCheckout("");
+                  }}
+                  className="w-full text-sm font-sans bg-transparent text-charcoal dark:text-ivory focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
+                />
+              </div>
+            </div>
+
+            {/* Check-out */}
+            <div className="flex items-center gap-2 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
+              <Calendar className="w-4 h-4 text-gold-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Check-out</p>
+                <input
+                  type="date"
+                  value={checkout}
+                  min={checkin || today}
+                  onChange={(e) => setCheckout(e.target.value)}
+                  className="w-full text-sm font-sans bg-transparent text-charcoal dark:text-ivory focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
+                />
+              </div>
+            </div>
+
             {/* Guests */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-52">
+            <div className="flex items-center gap-3 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
               <Users className="w-4 h-4 text-gold-500 flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Guests</p>
@@ -163,12 +218,22 @@ function VillasContent() {
             </button>
           </div>
 
-          {/* Result count */}
-          <p className="mt-4 text-sm font-sans text-charcoal/50 dark:text-ivory/50">
-            <span className="text-charcoal dark:text-ivory font-medium">{filtered.length}</span> villas
-            {selectedCity && <span className="text-gold-600 dark:text-gold-400"> in {selectedCity}</span>}
-            {guests > 0 && <span> · {guests}+ guests</span>}
-          </p>
+          {/* Result count + date summary */}
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm font-sans text-charcoal/50 dark:text-ivory/50">
+            <span>
+              <span className="text-charcoal dark:text-ivory font-medium">{filtered.length}</span> villas
+              {selectedCity && <span className="text-gold-600 dark:text-gold-400"> in {selectedCity}</span>}
+              {guests > 0 && <span> · {guests}+ guests</span>}
+            </span>
+            {(checkin || checkout) && (
+              <span className="flex items-center gap-1.5 text-gold-600 dark:text-gold-400 text-xs font-medium">
+                <Calendar className="w-3 h-3" />
+                {checkin && formatDate(checkin)}
+                {checkin && checkout && " → "}
+                {checkout && formatDate(checkout)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -177,7 +242,7 @@ function VillasContent() {
         {filtered.length === 0 ? (
           <div className="text-center py-24">
             <p className="text-charcoal/40 dark:text-ivory/40 font-sans text-sm mb-3">No villas found</p>
-            <button onClick={() => { setSelectedCity(""); setGuests(0); router.replace("/properties", { scroll: false }); }}
+            <button onClick={() => { setSelectedCity(""); setGuests(0); setCheckin(""); setCheckout(""); router.replace("/properties", { scroll: false }); }}
               className="text-gold-600 dark:text-gold-400 text-xs font-sans underline underline-offset-2">
               Clear filters
             </button>
@@ -187,7 +252,7 @@ function VillasContent() {
             {filtered.map((property) => (
               <Link
                 key={property.id}
-                href={`/properties/${property.slug}`}
+                href={propertyHref(property.slug)}
                 className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
               >
                 <div className="relative h-60 overflow-hidden">
