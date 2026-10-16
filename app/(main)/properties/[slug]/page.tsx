@@ -265,23 +265,27 @@ export default async function PropertyPage({ params }: Props) {
                 </div>
 
                 {/* Location */}
-                {property.location_description && (
-                  <div>
-                    <p className="label-text mb-4">Location</p>
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-4 h-4 text-gold-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="label-text mb-4">Location</p>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-4 h-4 text-gold-500 flex-shrink-0 mt-0.5" />
+                    <div>
                       <p className="text-sm font-sans text-charcoal/70 dark:text-ivory/70">
-                        {property.location_description}
-                      </p>
-                    </div>
-                    {/* Map placeholder */}
-                    <div className="mt-4 h-64 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex items-center justify-center">
-                      <p className="text-xs font-sans text-charcoal/40 dark:text-ivory/40">
-                        Map coming soon
+                        {property.location_description ?? (
+                          [property.city, property.state, property.country]
+                            .filter(Boolean)
+                            .join(", ")
+                        )}
                       </p>
                     </div>
                   </div>
-                )}
+                  {/* Map placeholder */}
+                  <div className="mt-4 h-64 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex items-center justify-center">
+                    <p className="text-xs font-sans text-charcoal/40 dark:text-ivory/40">
+                      Map coming soon
+                    </p>
+                  </div>
+                </div>
 
                 {/* Share / Brochure */}
                 <div>
