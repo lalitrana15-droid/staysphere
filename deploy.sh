@@ -11,8 +11,9 @@ fi
 
 echo "✓ .env.local found"
 
-git stash 2>/dev/null || true
-git pull origin main
+git fetch origin main
+git clean -f -d --exclude=.env.local
+git reset --hard origin/main
 echo "✓ Code updated"
 
 npm install --production=false --silent
