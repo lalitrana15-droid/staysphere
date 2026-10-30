@@ -6,6 +6,10 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type, Accept",
 };
 
+const ADMIN_AGENTS: Record<string, { name: string; agency_name: string; status: string }> = {
+  NEHA26SEP: { name: "Neha Sharma", agency_name: "StaysVacation Admin", status: "approved" },
+};
+
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: CORS });
 }
@@ -15,6 +19,13 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params;
+
+  if (ADMIN_AGENTS[code]) {
+    return NextResponse.json(
+      { agent: { ...ADMIN_AGENTS[code], referral_code: code } },
+      { headers: CORS }
+    );
+  }
 
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
