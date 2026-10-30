@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_AGENTS } from "@/lib/admin-agents";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Accept",
-};
-
-const ADMIN_AGENTS: Record<string, { name: string; agency_name: string; status: string }> = {
-  NEHA26SEP: { name: "Neha Sharma", agency_name: "StaysVacation Admin", status: "approved" },
 };
 
 export async function OPTIONS() {

@@ -1,14 +1,10 @@
 import { redirect } from "next/navigation";
 import { AgentDashboard } from "./AgentDashboard";
+import { ADMIN_AGENTS } from "@/lib/admin-agents";
 
 interface Props {
   params: Promise<{ code: string }>;
 }
-
-// Admin/test agent — always works, no Supabase needed
-const ADMIN_AGENTS: Record<string, { name: string; agency_name: string; status: string }> = {
-  NEHA26SEP: { name: "Neha Sharma", agency_name: "StaysVacation Admin", status: "approved" },
-};
 
 type AgentResult =
   | { status: "ok"; agent: Record<string, string>; leads: Record<string, string>[]; kycRecords: Record<string, string>[] }
