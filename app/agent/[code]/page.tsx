@@ -5,7 +5,21 @@ interface Props {
   params: Promise<{ code: string }>;
 }
 
+// Admin/test agent — always works, no Supabase needed
+const ADMIN_AGENTS: Record<string, { name: string; agency_name: string; status: string }> = {
+  NEHA26SEP: { name: "Neha Sharma", agency_name: "StaysVacation Admin", status: "approved" },
+};
+
 async function getAgentData(code: string) {
+  // Admin code bypass — never fails
+  if (ADMIN_AGENTS[code]) {
+    return {
+      agent: { ...ADMIN_AGENTS[code], referral_code: code },
+      leads: [],
+      kycRecords: [],
+    };
+  }
+
   try {
     if (
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
