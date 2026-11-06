@@ -94,7 +94,7 @@ export default function AgentToolsPage() {
                           </div>
                           <div>
                             <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory leading-snug">
-                              {p.code ?? p.title}
+                              {p.title}
                             </p>
                             <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 capitalize">
                               {p.property_type}

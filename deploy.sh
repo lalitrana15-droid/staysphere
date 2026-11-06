@@ -33,7 +33,7 @@ cp /var/www/villabase.imagesque.com/public/photoshoots/corum8-mansion/*.jpg \
    public/photoshoots/corum8-mansion/ 2>/dev/null || true
 echo "✓ Corum8 images: $(ls public/photoshoots/corum8-mansion/ 2>/dev/null | wc -l) files"
 
-fuser -k 3001/tcp 2>/dev/null || true
+fuser -k 3002/tcp 2>/dev/null || true
 sleep 1
 pm2 restart staysphere --update-env
 sleep 3

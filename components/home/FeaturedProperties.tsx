@@ -172,7 +172,7 @@ function PropertyCard({ property }: { property: typeof properties[0] }) {
             {property.city}, {property.country}
           </p>
           <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory leading-snug group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300">
-            {property.code ?? property.title}
+            {property.title}
           </h3>
         </div>
         <p className="text-xs font-sans text-charcoal/60 dark:text-ivory/60 leading-relaxed mb-5 line-clamp-2">

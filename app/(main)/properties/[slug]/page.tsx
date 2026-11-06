@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!property) return { title: "Property Not Found" };
 
   return {
-    title: `${property.code ?? property.title} — Luxury Villa in ${property.city}`,
+    title: `${property.title} — Luxury Villa in ${property.city}`,
     description: `${property.short_description}. ${property.bedrooms} bedrooms, ${property.bathrooms} bathrooms, up to ${property.max_guests} guests${property.has_pool ? ", private pool" : ""}.`,
     openGraph: {
-      title: `${property.code ?? property.title} | StaysVacation`,
+      title: `${property.title} | StaysVacation`,
       description: property.short_description,
       images: [{ url: property.images[0] }],
     },
@@ -143,7 +143,7 @@ export default async function PropertyPage({ params }: Props) {
                       <span>/</span>
                     </>
                   )}
-                  <span className="text-charcoal dark:text-ivory">{property.code ?? property.title}</span>
+                  <span className="text-charcoal dark:text-ivory">{property.title}</span>
                 </div>
 
                 {/* Header */}
@@ -155,7 +155,7 @@ export default async function PropertyPage({ params }: Props) {
                     </span>
                   </div>
                   <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory mb-4">
-                    {property.code ?? property.title}
+                    {property.title}
                   </h1>
 
                   {/* Quick Stats */}
@@ -292,7 +292,7 @@ export default async function PropertyPage({ params }: Props) {
                   <p className="label-text mb-4">Share This Property</p>
                   <div className="flex flex-col gap-2">
                     <a
-                      href={`https://wa.me/919999999999?text=Hi, I'd like to share this property with you: ${encodeURIComponent(`${property.code ?? property.title} — staysvacation.com/properties/${property.slug}`)}`}
+                      href={`https://wa.me/919999999999?text=Hi, I'd like to share this property with you: ${encodeURIComponent(`${property.title} — staysvacation.com/properties/${property.slug}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2.5 px-5 py-3 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] text-xs font-sans font-medium tracking-widest uppercase hover:bg-[#25D366]/20 transition-colors"
@@ -343,13 +343,13 @@ export default async function PropertyPage({ params }: Props) {
               <div className="lg:col-span-1">
                 <div className="sticky top-28">
                   <BookingEnquiryForm
-                    propertyTitle={property.code ?? property.title}
+                    propertyTitle={property.title}
                     propertySlug={property.slug}
                   />
 
                   {/* WhatsApp CTA */}
                   <a
-                    href={`https://wa.me/919999999999?text=Hi, I'm interested in ${encodeURIComponent(property.code ?? property.title)}`}
+                    href={`https://wa.me/919999999999?text=Hi, I'm interested in ${encodeURIComponent(property.title)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 mt-3 py-3.5 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] text-xs font-sans font-medium tracking-[0.1em] uppercase hover:bg-[#25D366]/20 transition-all duration-200"
@@ -407,7 +407,7 @@ export default async function PropertyPage({ params }: Props) {
                         {rel.city}
                       </p>
                       <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300">
-                        {rel.code ?? rel.title}
+                        {rel.title}
                       </h3>
                     </div>
                   </Link>

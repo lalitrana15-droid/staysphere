@@ -161,7 +161,7 @@ export default async function DestinationPage({ params }: Props) {
                     </div>
                     <div className="p-6">
                       <h3 className="font-serif text-2xl font-light text-charcoal dark:text-ivory mb-2 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300">
-                        {property.code ?? property.title}
+                        {property.title}
                       </h3>
                       <p className="text-xs font-sans text-charcoal/60 dark:text-ivory/60 leading-relaxed mb-5 line-clamp-2">
                         {property.short_description}

@@ -295,7 +295,7 @@ function VillasContent() {
                 </div>
                 <div className="p-5">
                   <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
-                    {property.code ?? property.title}
+                    {property.title}
                   </h3>
                   <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
                     {property.short_description}

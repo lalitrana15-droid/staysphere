@@ -52,7 +52,7 @@ function KycLinkGenerator({ kycBaseUrl, onKycTab }: { kycBaseUrl: string; onKycT
   const [selectedProperty, setSelectedProperty] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const propertyOptions = properties.map(p => ({ value: p.code ?? p.title, label: `${p.code ?? p.title} — ${p.city}` }));
+  const propertyOptions = properties.map(p => ({ value: p.title, label: `${p.title} — ${p.city}` }));
 
   const kycLink = selectedProperty
     ? `${kycBaseUrl}&property=${encodeURIComponent(selectedProperty)}`
@@ -231,7 +231,7 @@ export function AgentDashboard({
       const propUrl = `${siteBase}/properties/${prop.slug}?ref=${code}`;
       const includeBrochure = shareIncludeBrochure[prop.id] !== false;
       const brochureUrl = `${siteBase}/properties/${prop.slug}/brochure?ref=${code}`;
-      return `${i + 1}. *${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n🔗 ${propUrl}${includeBrochure ? `\n📋 Brochure: ${brochureUrl}` : ""}`;
+      return `${i + 1}. *${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n🔗 ${propUrl}${includeBrochure ? `\n📋 Brochure: ${brochureUrl}` : ""}`;
     });
     return `Hi! Here are some luxury villas I've curated for you:\n\n${lines.join("\n\n")}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know which one interests you most!`;
   };
@@ -244,7 +244,7 @@ export function AgentDashboard({
     if (!phone || !prop) return;
     const siteBase = typeof window !== "undefined" ? window.location.origin.replace("/agent/" + code, "") : "https://staysvacation.com";
     const propUrl = `${siteBase}/properties/${prop.slug}?ref=${code}`;
-    const msg = `Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
+    const msg = `Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
     const clean = phone.replace(/\D/g, "");
     const waPhone = clean.startsWith("91") ? clean : `91${clean}`;
     window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -705,7 +705,7 @@ export function AgentDashboard({
                     {/* Image */}
                     {prop.images?.[0] && (
                       <div className="relative h-44 overflow-hidden">
-                        <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={prop.images[0]} alt={prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         {prop.featured && (
                           <span className="absolute top-3 left-3 text-[9px] font-sans font-medium tracking-[0.15em] uppercase bg-gold-500 text-white px-2 py-0.5">
                             Featured
@@ -719,7 +719,7 @@ export function AgentDashboard({
 
                     {/* Info */}
                     <div className="p-4">
-                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory mb-0.5 pr-6 leading-tight">{prop.code ?? prop.title}</p>
+                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory mb-0.5 pr-6 leading-tight">{prop.title}</p>
                       <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-3">📍 {prop.city}, {prop.country}</p>
                       <div className="flex items-center gap-3 text-[10px] font-sans text-charcoal/50 dark:text-ivory/50">
                         <span>🛏 {prop.bedrooms} bed</span>
@@ -744,20 +744,20 @@ export function AgentDashboard({
           if (!prop) return null;
           const propUrl = `https://staysvacation.com/properties/${prop.slug}?ref=${code}`;
           const brochureUrl = `/properties/${prop.slug}/brochure`;
-          const waMsg = `Hi! Here's a luxury villa I'd like to share with you:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n📋 Brochure: https://staysvacation.com${brochureUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
+          const waMsg = `Hi! Here's a luxury villa I'd like to share with you:\n\n*${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n📋 Brochure: https://staysvacation.com${brochureUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`;
           return (
             <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center" onClick={() => setViewingProp(null)}>
               <div className="bg-white dark:bg-[#121212] w-full sm:max-w-2xl sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                 {/* Hero image carousel (show first 3) */}
                 {prop.images?.[0] && (
                   <div className="relative h-56 sm:h-72 overflow-hidden">
-                    <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-full h-full object-cover" />
+                    <img src={prop.images[0]} alt={prop.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <button onClick={() => setViewingProp(null)} className="absolute top-4 right-4 w-8 h-8 bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors">
                       <X className="w-4 h-4 text-white" />
                     </button>
                     <div className="absolute bottom-4 left-4 right-4">
-                      <p className="text-white font-serif text-xl font-light">{prop.code ?? prop.title}</p>
+                      <p className="text-white font-serif text-xl font-light">{prop.title}</p>
                       <p className="text-white/70 text-xs mt-1">📍 {prop.city}, {prop.country}</p>
                     </div>
                   </div>
@@ -933,7 +933,7 @@ export function AgentDashboard({
                   <option value="">— Select a property —</option>
                   {filteredProperties.map(p => (
                     <option key={p.id} value={p.id}>
-                      {p.code ?? p.title} · {p.city}
+                      {p.title} · {p.city}
                     </option>
                   ))}
                 </select>
@@ -949,7 +949,7 @@ export function AgentDashboard({
                   <div className="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4">
                     <p className="text-[10px] font-sans font-medium tracking-[0.15em] uppercase text-charcoal/40 mb-2">Message Preview</p>
                     <p className="text-xs font-sans text-charcoal/70 dark:text-ivory/70 whitespace-pre-line leading-relaxed">
-                      {`Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.code ?? prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`}
+                      {`Hi! I'm sharing a luxury villa from StaysVacation that matches your requirements:\n\n*${prop.title}*\n📍 ${prop.city}, ${prop.country}\n🛏 ${prop.bedrooms} bed · 🛁 ${prop.bathrooms} bath · 👥 up to ${prop.max_guests} guests${prop.has_pool ? " · Pool" : ""}\n\n🔗 View property: ${propUrl}\n\n🏷️ Use my agent code *${code}* and get *5% discount* on the final price!\n\nLet me know if you'd like more details!`}
                     </p>
                   </div>
                 );
@@ -993,10 +993,10 @@ export function AgentDashboard({
                 return (
                   <div key={prop.id} className="flex items-center gap-4 px-6 py-4">
                     {prop.images?.[0] && (
-                      <img src={prop.images[0]} alt={prop.code ?? prop.title} className="w-16 h-12 object-cover flex-shrink-0" />
+                      <img src={prop.images[0]} alt={prop.title} className="w-16 h-12 object-cover flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory truncate">{prop.code ?? prop.title}</p>
+                      <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory truncate">{prop.title}</p>
                       <p className="text-xs font-sans text-charcoal/50">📍 {prop.city} · 🛏 {prop.bedrooms} bed · 👥 {prop.max_guests}</p>
                     </div>
                     {/* Brochure toggle */}

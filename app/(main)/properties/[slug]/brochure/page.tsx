@@ -280,7 +280,7 @@ export default async function PropertyBrochurePage({ params, searchParams }: Pro
               <div className="brand-tagline">Curated Luxury Stays</div>
             </>
           )}
-          <h1 className="property-title">{property.code ?? property.title}</h1>
+          <h1 className="property-title">{property.title}</h1>
           <p className="property-location">
             {property.city}{property.state ? `, ${property.state}` : ""} · {property.country}
           </p>
