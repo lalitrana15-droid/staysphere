@@ -1,13 +1,10 @@
-"use client";
-
-import { useState, useMemo, useEffect, useRef, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Users, MapPin, ChevronDown, Search, Calendar } from "lucide-react";
+import { BedDouble, Bath, Users, Calendar } from "lucide-react";
 import { properties } from "@/data/properties";
+import { VillasSearchBar } from "@/components/property/VillasSearchBar";
 
-// Normalise Goa: merge "North Goa" / "South Goa" into "Goa" for display
 function normaliseCity(city: string): string {
   if (city === "North Goa" || city === "South Goa") return "Goa";
   return city;
@@ -22,94 +19,51 @@ const allDestinations = Array.from(
   new Map(
     properties.map((p) => {
       const city = normaliseCity(p.city);
-      return [city, { city, state: p.state, count: 0 }];
+      return [city, { city, state: p.state ?? "", count: 0 }];
     })
   ).values()
-).map((d) => ({
-  ...d,
-  count: properties.filter((p) => normaliseCity(p.city) === d.city).length,
-})).sort((a, b) => a.city.localeCompare(b.city));
+)
+  .map((d) => ({
+    ...d,
+    count: properties.filter((p) => normaliseCity(p.city) === d.city).length,
+  }))
+  .sort((a, b) => a.city.localeCompare(b.city));
 
-export default function VillasPage() {
-  return (
-    <Suspense fallback={<div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]" />}>
-      <VillasContent />
-    </Suspense>
-  );
-}
+export default async function VillasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    city?: string;
+    guests?: string;
+    checkin?: string;
+    checkout?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const city = params.city ?? "";
+  const guests = parseInt(params.guests ?? "0") || 0;
+  const checkin = params.checkin ?? "";
+  const checkout = params.checkout ?? "";
 
-const PAGE_SIZE = 18;
-
-function VillasContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const [selectedCity, setSelectedCity] = useState<string>(searchParams.get("city") ?? "");
-  const [guests, setGuests] = useState<number>(parseInt(searchParams.get("guests") ?? "0") || 0);
-  const [checkin, setCheckin] = useState<string>(searchParams.get("checkin") ?? "");
-  const [checkout, setCheckout] = useState<string>(searchParams.get("checkout") ?? "");
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [destOpen, setDestOpen] = useState(false);
-  const [destSearch, setDestSearch] = useState("");
-  const destRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSelectedCity(searchParams.get("city") ?? "");
-    setGuests(parseInt(searchParams.get("guests") ?? "0") || 0);
-    setCheckin(searchParams.get("checkin") ?? "");
-    setCheckout(searchParams.get("checkout") ?? "");
-  }, [searchParams]);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (destRef.current && !destRef.current.contains(e.target as Node)) {
-        setDestOpen(false);
-        setDestSearch("");
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  const filteredDests = allDestinations.filter((d) =>
-    d.city.toLowerCase().includes(destSearch.toLowerCase())
-  );
-
-  const today = new Date().toISOString().split("T")[0];
-
-  function applySearch() {
-    const params = new URLSearchParams();
-    if (selectedCity) params.set("city", selectedCity);
-    if (checkin) params.set("checkin", checkin);
-    if (checkout) params.set("checkout", checkout);
-    if (guests > 0) params.set("guests", String(guests));
-    const qs = params.toString();
-    router.replace(qs ? `/properties?${qs}` : "/properties", { scroll: false });
-    setDestOpen(false);
-  }
+  let filtered = properties;
+  if (city) filtered = filtered.filter((p) => cityMatches(p.city, city));
+  if (guests > 0) filtered = filtered.filter((p) => p.max_guests >= guests);
 
   function propertyHref(slug: string) {
-    const params = new URLSearchParams();
-    if (checkin) params.set("checkin", checkin);
-    if (checkout) params.set("checkout", checkout);
-    if (guests > 0) params.set("guests", String(guests));
-    const qs = params.toString();
+    const p = new URLSearchParams();
+    if (checkin) p.set("checkin", checkin);
+    if (checkout) p.set("checkout", checkout);
+    if (guests > 0) p.set("guests", String(guests));
+    const qs = p.toString();
     return qs ? `/properties/${slug}?${qs}` : `/properties/${slug}`;
   }
 
-  const filtered = useMemo(() => {
-    let list = properties;
-    if (selectedCity) list = list.filter((p) => cityMatches(p.city, selectedCity));
-    if (guests > 0) list = list.filter((p) => p.max_guests >= guests);
-    return list;
-  }, [selectedCity, guests]);
-
-  // Reset pagination when filters change
-  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [selectedCity, guests]);
-
   function formatDate(d: string) {
     if (!d) return "";
-    return new Date(d + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    return new Date(d + "T00:00:00").toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+    });
   }
 
   return (
@@ -122,129 +76,29 @@ function VillasContent() {
             All Villas
           </h1>
 
-          {/* Search Bar */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#181818] shadow-sm">
-            {/* Destination */}
-            <div ref={destRef} className="relative flex-1 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700">
-              <button
-                onClick={() => { setDestOpen((o) => !o); }}
-                className="w-full flex items-center gap-3 px-5 py-4 text-left"
-              >
-                <MapPin className="w-4 h-4 text-gold-500 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Destination</p>
-                  <p className={`text-sm font-sans truncate ${selectedCity ? "text-charcoal dark:text-ivory" : "text-charcoal/30 dark:text-ivory/30"}`}>
-                    {selectedCity || "All destinations"}
-                  </p>
-                </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-charcoal/30 dark:text-ivory/30 transition-transform duration-200 ${destOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {destOpen && (
-                <div className="absolute top-full left-0 right-0 z-50 bg-white dark:bg-[#181818] border border-stone-200 dark:border-stone-700 shadow-luxury mt-1 max-h-72 overflow-hidden flex flex-col">
-                  <div className="p-2 border-b border-stone-100 dark:border-stone-800">
-                    <input
-                      type="text"
-                      placeholder="Search destinations..."
-                      value={destSearch}
-                      onChange={(e) => setDestSearch(e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm font-sans bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-charcoal dark:text-ivory placeholder:text-charcoal/30 dark:placeholder:text-ivory/30 focus:outline-none"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="overflow-y-auto">
-                    <button
-                      onClick={() => { setSelectedCity(""); setDestOpen(false); setDestSearch(""); }}
-                      className={`w-full text-left px-4 py-2.5 text-sm font-sans transition-colors ${!selectedCity ? "bg-gold-50 dark:bg-gold-900/20 text-gold-600 dark:text-gold-400" : "text-charcoal/70 dark:text-ivory/70 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
-                    >
-                      All destinations
-                      <span className="ml-2 text-xs text-charcoal/30 dark:text-ivory/30">({properties.length})</span>
-                    </button>
-                    {filteredDests.map((d) => (
-                      <button
-                        key={d.city}
-                        onClick={() => { setSelectedCity(d.city); setDestOpen(false); setDestSearch(""); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm font-sans transition-colors ${selectedCity === d.city ? "bg-gold-50 dark:bg-gold-900/20 text-gold-600 dark:text-gold-400" : "text-charcoal/70 dark:text-ivory/70 hover:bg-stone-50 dark:hover:bg-stone-800"}`}
-                      >
-                        {d.city}
-                        {d.state ? <span className="text-charcoal/30 dark:text-ivory/30">, {d.state}</span> : null}
-                        <span className="ml-2 text-xs text-charcoal/30 dark:text-ivory/30">({d.count})</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Check-in */}
-            <div className="flex items-center gap-2 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
-              <Calendar className="w-4 h-4 text-gold-500 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Check-in</p>
-                <input
-                  type="date"
-                  value={checkin}
-                  min={today}
-                  onChange={(e) => {
-                    setCheckin(e.target.value);
-                    if (checkout && e.target.value >= checkout) setCheckout("");
-                  }}
-                  className="w-full text-sm font-sans bg-transparent text-charcoal dark:text-ivory focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
-                />
-              </div>
-            </div>
-
-            {/* Check-out */}
-            <div className="flex items-center gap-2 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
-              <Calendar className="w-4 h-4 text-gold-500 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Check-out</p>
-                <input
-                  type="date"
-                  value={checkout}
-                  min={checkin || today}
-                  onChange={(e) => setCheckout(e.target.value)}
-                  className="w-full text-sm font-sans bg-transparent text-charcoal dark:text-ivory focus:outline-none [color-scheme:light] dark:[color-scheme:dark]"
-                />
-              </div>
-            </div>
-
-            {/* Guests */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-700 md:w-44">
-              <Users className="w-4 h-4 text-gold-500 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-[9px] font-sans font-semibold tracking-[0.18em] uppercase text-charcoal/40 dark:text-ivory/40 mb-0.5">Guests</p>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setGuests((g) => Math.max(0, g - 1))}
-                    className="w-5 h-5 flex items-center justify-center text-charcoal/40 dark:text-ivory/40 hover:text-charcoal dark:hover:text-ivory border border-stone-200 dark:border-stone-700 text-sm leading-none"
-                  >−</button>
-                  <span className="text-sm font-sans text-charcoal dark:text-ivory w-6 text-center">
-                    {guests === 0 ? "Any" : guests}
-                  </span>
-                  <button
-                    onClick={() => setGuests((g) => g + 1)}
-                    className="w-5 h-5 flex items-center justify-center text-charcoal/40 dark:text-ivory/40 hover:text-charcoal dark:hover:text-ivory border border-stone-200 dark:border-stone-700 text-sm leading-none"
-                  >+</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Button */}
-            <button
-              onClick={applySearch}
-              className="flex items-center justify-center gap-2 px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white transition-colors duration-200"
-            >
-              <Search className="w-4 h-4" />
-              <span className="text-[11px] font-sans font-semibold tracking-[0.15em] uppercase">Search</span>
-            </button>
-          </div>
+          <Suspense fallback={null}>
+            <VillasSearchBar
+              destinations={allDestinations}
+              currentCity={city}
+              currentGuests={guests}
+              currentCheckin={checkin}
+              currentCheckout={checkout}
+            />
+          </Suspense>
 
           {/* Result count + date summary */}
           <div className="mt-4 flex flex-wrap items-center gap-3 text-sm font-sans text-charcoal/50 dark:text-ivory/50">
             <span>
-              <span className="text-charcoal dark:text-ivory font-medium">{filtered.length}</span> villas
-              {selectedCity && <span className="text-gold-600 dark:text-gold-400"> in {selectedCity}</span>}
+              <span className="text-charcoal dark:text-ivory font-medium">
+                {filtered.length}
+              </span>{" "}
+              villas
+              {city && (
+                <span className="text-gold-600 dark:text-gold-400">
+                  {" "}
+                  in {city}
+                </span>
+              )}
               {guests > 0 && <span> · {guests}+ guests</span>}
             </span>
             {(checkin || checkout) && (
@@ -263,94 +117,91 @@ function VillasContent() {
       <div className="luxury-container py-12">
         {filtered.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-charcoal/40 dark:text-ivory/40 font-sans text-sm mb-3">No villas found</p>
-            <button onClick={() => { setSelectedCity(""); setGuests(0); setCheckin(""); setCheckout(""); router.replace("/properties", { scroll: false }); }}
-              className="text-gold-600 dark:text-gold-400 text-xs font-sans underline underline-offset-2">
+            <p className="text-charcoal/40 dark:text-ivory/40 font-sans text-sm mb-3">
+              No villas found
+            </p>
+            <Link
+              href="/properties"
+              className="text-gold-600 dark:text-gold-400 text-xs font-sans underline underline-offset-2"
+            >
               Clear filters
-            </button>
+            </Link>
           </div>
         ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.slice(0, visibleCount).map((property, i) => (
-                <Link
-                  key={property.id}
-                  href={propertyHref(property.slug)}
-                  className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
-                >
-                  <div className="relative h-60 overflow-hidden bg-stone-100 dark:bg-stone-900">
-                    <Image
-                      src={property.images[0]}
-                      alt={property.title}
-                      fill
-                      priority={i < 6}
-                      loading={i < 6 ? "eager" : "lazy"}
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    {property.has_pool && (
-                      <div className="absolute top-3 left-3">
-                        <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
-                          Pool
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((property, i) => (
+              <Link
+                key={property.id}
+                href={propertyHref(property.slug)}
+                className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
+              >
+                <div className="relative h-60 overflow-hidden bg-stone-100 dark:bg-stone-900">
+                  <Image
+                    src={property.images[0]}
+                    alt={property.title}
+                    fill
+                    priority={i < 6}
+                    loading={i < 6 ? "eager" : "lazy"}
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  {property.has_pool && (
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
+                        Pool
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute bottom-3 left-3">
+                    <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
+                      {property.city}
+                      {property.state ? `, ${property.state}` : ""}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
+                    {property.title}
+                  </h3>
+                  <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
+                    {property.short_description}
+                  </p>
+                  <div className="flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800">
+                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                      <BedDouble className="w-3 h-3" />
+                      <span className="text-[11px] font-sans">
+                        {property.bedrooms}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                      <Bath className="w-3 h-3" />
+                      <span className="text-[11px] font-sans">
+                        {property.bathrooms}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                      <Users className="w-3 h-3" />
+                      <span className="text-[11px] font-sans">
+                        {property.max_guests} guests
+                      </span>
+                    </div>
+                    {property.starting_price && (
+                      <div className="ml-auto text-right">
+                        <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">
+                          from{" "}
+                        </span>
+                        <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
+                          ₹{property.starting_price.toLocaleString("en-IN")}
                         </span>
                       </div>
                     )}
-                    <div className="absolute bottom-3 left-3">
-                      <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
-                        {property.city}{property.state ? `, ${property.state}` : ""}
-                      </span>
-                    </div>
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
-                      {property.title}
-                    </h3>
-                    <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
-                      {property.short_description}
-                    </p>
-                    <div className="flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800">
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <BedDouble className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">{property.bedrooms}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <Bath className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">{property.bathrooms}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <Users className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">{property.max_guests} guests</span>
-                      </div>
-                      {property.starting_price && (
-                        <div className="ml-auto text-right">
-                          <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
-                          <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                            ₹{property.starting_price.toLocaleString("en-IN")}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            {visibleCount < filtered.length && (
-              <div className="mt-12 text-center">
-                <p className="text-xs font-sans text-charcoal/40 dark:text-ivory/40 mb-4">
-                  Showing {visibleCount} of {filtered.length} villas
-                </p>
-                <button
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="px-10 py-3 border border-charcoal/20 dark:border-ivory/20 text-[11px] font-sans font-semibold tracking-[0.15em] uppercase text-charcoal dark:text-ivory hover:bg-charcoal hover:text-white dark:hover:bg-ivory dark:hover:text-charcoal transition-colors duration-300"
-                >
-                  Load more villas
-                </button>
-              </div>
-            )}
-          </>
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </div>
