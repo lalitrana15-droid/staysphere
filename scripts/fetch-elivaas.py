@@ -12,6 +12,11 @@ from pathlib import Path
 USE_SANDBOX = True
 BASE = "https://sandbox.elivaas.com" if USE_SANDBOX else "https://api.elivaas.com/api"
 
+# Cloudflare Worker proxy — hides images.elivaas.com from users
+# img.staysvacation.com is a custom domain on the staysvacation-images Worker
+USE_CDN_PROXY = True
+CDN_BASE = "https://img.staysvacation.com"
+
 # Default to Nov 25 → Nov 30 (near-future dates for maximum sandbox availability)
 CHECKIN  = "2026-11-25"
 CHECKOUT = "2026-11-30"
@@ -84,6 +89,11 @@ DEST_COUNTRY: dict[str, str] = {
 }
 
 HTML_TAG_RE = re.compile(r'<[^>]+>')
+# Sentences/phrases that mention Elivaas brand — removed from descriptions
+ELIVAAS_RE = re.compile(
+    r'(At ELIVAAS[^.]*\.|ELIVAAS[^.]*\.|[Ee]livaas[^.]*brand[^.]*\.|[Ee]livaas[^.]*team[^.]*\.)',
+    re.IGNORECASE
+)
 
 def strip_html(text: str) -> str:
     if not text:
@@ -91,7 +101,10 @@ def strip_html(text: str) -> str:
     text = HTML_TAG_RE.sub(" ", text)
     text = re.sub(r'\s+', ' ', text)
     text = text.replace("&nbsp;", " ").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
-    return text.strip()
+    # Remove any sentences that mention Elivaas brand
+    text = ELIVAAS_RE.sub("", text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
 
 def get_metric(metrics: list, name: str) -> int:
     for m in metrics or []:
@@ -187,6 +200,11 @@ def map_to_property(item: dict):
     for img in item.get("images") or []:
         url = img.get("url") or img.get("mobileUrl") or ""
         if url and "http" in url:
+            if USE_CDN_PROXY and "images.elivaas.com" in url:
+                # Rewrite to our CDN proxy: https://img.staysvacation.com/filename.jpg
+                from urllib.parse import urlparse
+                path = urlparse(url).path
+                url = f"{CDN_BASE}{path}"
             images.append(url)
     if not images:
         return None  # skip properties with no images
