@@ -78,6 +78,7 @@ CREATE TABLE leads (
   guests INTEGER,
   enquiry_type TEXT,
   source TEXT NOT NULL DEFAULT 'contact',
+  ref_agent_code TEXT,
   status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'qualified', 'converted', 'closed')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -132,6 +133,9 @@ CREATE POLICY "Allow owner lead inserts" ON owner_leads FOR INSERT WITH CHECK (t
 
 -- Admin: service role can do everything
 -- Properties and destinations managed via service role (admin panel)
+
+-- Migration: add ref_agent_code to existing leads table
+-- ALTER TABLE leads ADD COLUMN IF NOT EXISTS ref_agent_code TEXT;
 
 -- INDEXES for performance
 CREATE INDEX idx_properties_destination_slug ON properties(destination_slug);

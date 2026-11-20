@@ -3,16 +3,30 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
+const REF_COOKIE = "sv_ref";
+const REF_DAYS = 30;
+const REF_REGEX = /^[A-Za-z0-9_-]{1,32}$/;
+
+function setCookie(name: string, value: string, days: number) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function getCookieValue(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(
+    new RegExp("(?:^|;\\s*)" + name + "=([^;]*)")
+  );
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export function ReferralTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const ref = searchParams.get("ref");
-    if (ref) {
-      try {
-        localStorage.setItem("sc_ref", ref);
-        localStorage.setItem("sc_ref_ts", Date.now().toString());
-      } catch {}
+    if (ref && REF_REGEX.test(ref)) {
+      setCookie(REF_COOKIE, ref, REF_DAYS);
     }
   }, [searchParams]);
 
@@ -20,18 +34,5 @@ export function ReferralTracker() {
 }
 
 export function getReferralCode(): string | null {
-  try {
-    const ref = localStorage.getItem("sc_ref");
-    const ts = localStorage.getItem("sc_ref_ts");
-    if (!ref || !ts) return null;
-    // Referral attribution valid for 30 days
-    if (Date.now() - parseInt(ts) > 30 * 24 * 60 * 60 * 1000) {
-      localStorage.removeItem("sc_ref");
-      localStorage.removeItem("sc_ref_ts");
-      return null;
-    }
-    return ref;
-  } catch {
-    return null;
-  }
+  return getCookieValue(REF_COOKIE);
 }

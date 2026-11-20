@@ -43,9 +43,26 @@ export function BookingEnquiryForm({ propertyTitle, propertySlug }: BookingEnqui
     const checkin = params.get("checkin");
     const checkout = params.get("checkout");
     const guests = params.get("guests");
-    if (checkin) setValue("check_in", checkin);
-    if (checkout) setValue("check_out", checkout);
-    if (guests) setValue("guests", guests);
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    const validCheckin =
+      checkin && /^\d{4}-\d{2}-\d{2}$/.test(checkin) && checkin >= today
+        ? checkin
+        : null;
+    const validCheckout =
+      checkout &&
+      /^\d{4}-\d{2}-\d{2}$/.test(checkout) &&
+      validCheckin &&
+      checkout > validCheckin
+        ? checkout
+        : null;
+    const validGuests =
+      guests && /^\d+$/.test(guests) && parseInt(guests) > 0 ? guests : null;
+
+    if (validCheckin) setValue("check_in", validCheckin);
+    if (validCheckout) setValue("check_out", validCheckout);
+    if (validGuests) setValue("guests", validGuests);
   }, [setValue]);
 
   const onSubmit = async (data: FormData) => {

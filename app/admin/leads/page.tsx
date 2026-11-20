@@ -48,7 +48,7 @@ export default async function AdminLeadsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-stone-200 dark:border-stone-800">
-                  {["Name", "Email", "Phone", "Source", "Property", "Date", "Actions"].map((h) => (
+                  {["Name", "Email", "Phone", "Source", "Agent Ref", "Property", "Date", "Actions"].map((h) => (
                     <th
                       key={h}
                       className="text-left px-5 py-4 text-[10px] font-sans font-medium tracking-[0.12em] uppercase text-charcoal/50 dark:text-ivory/50"
@@ -77,6 +77,15 @@ export default async function AdminLeadsPage() {
                       <span className="px-2 py-0.5 bg-stone-100 dark:bg-stone-900 text-[9px] font-sans font-medium tracking-wide uppercase text-charcoal/60 dark:text-ivory/60">
                         {lead.source}
                       </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      {lead.ref_agent_code ? (
+                        <span className="px-2 py-0.5 bg-gold-100 dark:bg-gold-900/30 text-[9px] font-sans font-medium tracking-wide uppercase text-gold-700 dark:text-gold-400">
+                          {lead.ref_agent_code}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-charcoal/30 dark:text-ivory/30">—</span>
+                      )}
                     </td>
                     <td className="px-5 py-4 text-xs font-sans text-charcoal/50 dark:text-ivory/50">
                       {lead.property_id || "—"}
