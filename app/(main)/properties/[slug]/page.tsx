@@ -430,20 +430,24 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                 <div className="sticky top-28">
                   {/* Price display */}
                   <div className="mb-5 pb-5 border-b border-stone-200 dark:border-stone-800">
-                    {pricePerNight ? (
+                    {(pricePerNight || property.starting_price) ? (
                       <div>
                         <p className="label-text mb-1">Starting From</p>
                         <div className="flex items-baseline gap-1">
                           <span className="font-serif text-3xl font-light text-charcoal dark:text-ivory">
-                            ₹{pricePerNight.toLocaleString("en-IN")}
+                            ₹{(pricePerNight || property.starting_price!).toLocaleString("en-IN")}
                           </span>
                           <span className="text-xs font-sans text-charcoal/40 dark:text-ivory/40">/night</span>
                         </div>
-                        {checkin && checkout && (
+                        {checkin && checkout ? (
                           <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 mt-1 tracking-wide">
                             {new Date(checkin + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                             {" → "}
                             {new Date(checkout + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                          </p>
+                        ) : (
+                          <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 mt-1">
+                            Select dates for exact pricing
                           </p>
                         )}
                       </div>
@@ -451,9 +455,6 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                       <div>
                         <p className="label-text mb-1">Pricing</p>
                         <p className="font-serif text-2xl font-light text-charcoal dark:text-ivory">Price on Request</p>
-                        <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 mt-1">
-                          Select dates to see pricing
-                        </p>
                       </div>
                     )}
                   </div>

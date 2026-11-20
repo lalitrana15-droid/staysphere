@@ -235,11 +235,11 @@ export default async function VillasPage({
                         </span>
                       </div>
                       <div className="ml-auto text-right">
-                        {livePrices[property.id] ? (
+                        {(livePrices[property.id] || property.starting_price) ? (
                           <>
                             <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
                             <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                              ₹{livePrices[property.id].toLocaleString("en-IN")}
+                              ₹{(livePrices[property.id] || property.starting_price!).toLocaleString("en-IN")}
                               <span className="text-[9px] font-normal text-charcoal/40 dark:text-ivory/40">/night</span>
                             </span>
                           </>
