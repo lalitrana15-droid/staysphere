@@ -321,12 +321,10 @@ export default async function PropertyBrochurePage({ params, searchParams }: Pro
             </span>
             <span className="stat-label">Property Type</span>
           </div>
-          {property.starting_price && (
-            <div className="stat-item">
-              <span className="stat-value">₹{property.starting_price.toLocaleString("en-IN")}</span>
-              <span className="stat-label">Starting From / Night</span>
-            </div>
-          )}
+          <div className="stat-item">
+            <span className="stat-value">On Request</span>
+            <span className="stat-label">Pricing</span>
+          </div>
         </div>
 
         <div className="divider" />

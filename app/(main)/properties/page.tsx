@@ -225,16 +225,11 @@ export default async function VillasPage({
                           {property.max_guests} guests
                         </span>
                       </div>
-                      {property.starting_price && (
-                        <div className="ml-auto text-right">
-                          <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">
-                            from{" "}
-                          </span>
-                          <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                            ₹{property.starting_price.toLocaleString("en-IN")}
-                          </span>
-                        </div>
-                      )}
+                      <div className="ml-auto">
+                        <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
+                          Price on Request
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </Link>
