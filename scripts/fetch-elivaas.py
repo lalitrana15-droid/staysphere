@@ -177,7 +177,7 @@ def map_to_property(item: dict):
     metrics   = item.get("metrics") or []
     bedrooms  = get_metric(metrics, "Bedrooms") or 1
     bathrooms = get_metric(metrics, "Bathrooms") or 1
-    max_guests= item.get("maxOccupancy") or item.get("applicableGuest") or 4
+    max_guests= item.get("maxAdults") or item.get("maxOccupancy") or 4
 
     amenities = [a["name"] for a in (item.get("amenities") or []) if a.get("name")]
     top_amenities = item.get("topAmenities") or []
@@ -190,6 +190,14 @@ def map_to_property(item: dict):
             images.append(url)
     if not images:
         return None  # skip properties with no images
+
+    # Sections: check-in rules, house rules, meals, nearest places
+    sections = []
+    for s in item.get("sections") or []:
+        title   = (s.get("title") or "").strip()
+        content = strip_html(s.get("description") or s.get("content") or "")
+        if title and content:
+            sections.append({"title": title, "content": content})
 
     description   = strip_html(item.get("description") or "")
     short_desc    = description[:220].rstrip()
@@ -218,7 +226,8 @@ def map_to_property(item: dict):
         "description":      description or f"{title} — a luxury {map_property_type(item.get('type',''))} in {raw_city}.",
         "short_description": short_desc or f"Luxury {map_property_type(item.get('type',''))} in {raw_city}",
         "amenities":        list(dict.fromkeys(amenities)),  # deduplicate
-        "images":           images[:20],
+        "images":           images,
+        "sections":         sections,
         "featured":         False,
         "price_on_request": is_sold_out or per_night is None,
         "starting_price":   per_night,
@@ -233,6 +242,14 @@ def prop_to_ts(p: dict) -> str:
     amenities_ts = ",\n      ".join(f'"{a}"' for a in p["amenities"])
     images_ts    = ",\n      ".join(f'"{u}"' for u in p["images"])
     starting_price_ts = f"\n    starting_price: {p['starting_price']}," if p["starting_price"] else ""
+    sections = p.get("sections") or []
+    sections_ts = ""
+    if sections:
+        inner = ",\n      ".join(
+            f'{{ title: {to_ts_string(s["title"])}, content: {to_ts_string(s["content"])} }}'
+            for s in sections
+        )
+        sections_ts = f"\n    sections: [\n      {inner}\n    ],"
     return f"""  {{
     id: "{p['id']}",
     slug: "{p['slug']}",
@@ -256,7 +273,7 @@ def prop_to_ts(p: dict) -> str:
       {images_ts}
     ],
     featured: false,
-    price_on_request: {str(p['price_on_request']).lower()},{starting_price_ts}
+    price_on_request: {str(p['price_on_request']).lower()},{starting_price_ts}{sections_ts}
     property_type: "{p['property_type']}",
   }}"""
 

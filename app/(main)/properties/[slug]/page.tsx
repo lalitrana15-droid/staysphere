@@ -265,6 +265,22 @@ export default async function PropertyPage({ params }: Props) {
                   </div>
                 </div>
 
+                {/* Property Info Sections (check-in, house rules, meals, etc.) */}
+                {property.sections && property.sections.length > 0 && (
+                  <div className="space-y-6">
+                    {property.sections
+                      .filter((s) => s.title !== "Villa Snapshot")
+                      .map((section) => (
+                        <div key={section.title}>
+                          <p className="label-text mb-3">{section.title}</p>
+                          <p className="font-sans text-sm text-charcoal/70 dark:text-ivory/70 leading-relaxed whitespace-pre-line">
+                            {section.content}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
+                )}
+
                 {/* Location */}
                 <div>
                   <p className="label-text mb-4">Location</p>
