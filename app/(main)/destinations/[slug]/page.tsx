@@ -48,11 +48,12 @@ export default async function DestinationPage({ params }: Props) {
       {/* Hero */}
       <div className="relative h-[60vh] min-h-[450px] flex items-end overflow-hidden">
         <Image
-          src={destination.hero_image}
+          src={`${destination.hero_image}?w=1600`}
           alt={destination.name}
           fill
           className="object-cover"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
@@ -139,11 +140,12 @@ export default async function DestinationPage({ params }: Props) {
                   >
                     <div className="relative h-72 overflow-hidden">
                       <Image
-                        src={property.images[0]}
+                        src={`${property.images[0]}?w=800`}
                         alt={property.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                       <div className="absolute top-4 left-4 flex gap-2">

@@ -130,11 +130,12 @@ export default async function PropertyPage({ params, searchParams }: Props) {
         {/* Mobile Hero */}
         <div className="md:hidden relative h-72">
           <Image
-            src={property.images[0]}
+            src={`${property.images[0]}?w=800`}
             alt={property.title}
             fill
             priority
             className="object-cover"
+            unoptimized
           />
         </div>
 
@@ -502,11 +503,12 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                   >
                     <div className="relative h-52 overflow-hidden">
                       <Image
-                        src={rel.images[0]}
+                        src={`${rel.images[0]}?w=800`}
                         alt={rel.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                         sizes="33vw"
+                        unoptimized
                       />
                     </div>
                     <div className="p-5">

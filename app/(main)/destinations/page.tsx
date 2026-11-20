@@ -48,11 +48,12 @@ export default function DestinationsPage() {
                 >
                   <div className="relative h-64 overflow-hidden">
                     <Image
-                      src={destination.hero_image}
+                      src={`${destination.hero_image}?w=800`}
                       alt={destination.name}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, 33vw"
+                      unoptimized
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <div className="absolute bottom-4 left-4">
