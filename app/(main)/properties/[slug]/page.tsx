@@ -8,9 +8,11 @@ import { getDestinationBySlug } from "@/data/destinations";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
 import { BookingEnquiryForm } from "@/components/property/BookingEnquiryForm";
 import { PropertyShareWhatsAppButton, PropertyEnquireWhatsAppButton } from "@/components/property/PropertyWhatsAppButtons";
+import { fetchLivePrices } from "@/lib/elivaas-rates";
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ checkin?: string; checkout?: string; guests?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -33,10 +35,22 @@ export async function generateStaticParams() {
   return properties.map((p) => ({ slug: p.slug }));
 }
 
-export default async function PropertyPage({ params }: Props) {
+export default async function PropertyPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const sp = await searchParams;
   const property = getPropertyBySlug(slug);
   if (!property) notFound();
+
+  const checkin = sp.checkin ?? "";
+  const checkout = sp.checkout ?? "";
+  const guests = sp.guests ?? "";
+
+  // Fetch live price when dates provided
+  let pricePerNight: number | null = null;
+  if (checkin && checkout && property.state) {
+    const prices = await fetchLivePrices(checkin, checkout, [property.state]);
+    pricePerNight = prices[property.id] ?? null;
+  }
 
   const destination = getDestinationBySlug(property.destination_slug);
   const related = getRelatedProperties(property, 3);
@@ -414,6 +428,36 @@ export default async function PropertyPage({ params }: Props) {
               {/* Right: Enquiry Form */}
               <div className="lg:col-span-1">
                 <div className="sticky top-28">
+                  {/* Price display */}
+                  <div className="mb-5 pb-5 border-b border-stone-200 dark:border-stone-800">
+                    {pricePerNight ? (
+                      <div>
+                        <p className="label-text mb-1">Starting From</p>
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-serif text-3xl font-light text-charcoal dark:text-ivory">
+                            ₹{pricePerNight.toLocaleString("en-IN")}
+                          </span>
+                          <span className="text-xs font-sans text-charcoal/40 dark:text-ivory/40">/night</span>
+                        </div>
+                        {checkin && checkout && (
+                          <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 mt-1 tracking-wide">
+                            {new Date(checkin + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                            {" → "}
+                            {new Date(checkout + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="label-text mb-1">Pricing</p>
+                        <p className="font-serif text-2xl font-light text-charcoal dark:text-ivory">Price on Request</p>
+                        <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 mt-1">
+                          Select dates to see pricing
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
                   <BookingEnquiryForm
                     propertyTitle={property.title}
                     propertySlug={property.slug}

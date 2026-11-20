@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BedDouble, Bath, Users, Calendar } from "lucide-react";
 import { properties } from "@/data/properties";
 import { VillasSearchBar } from "@/components/property/VillasSearchBar";
+import { fetchLivePrices, uniqueStates } from "@/lib/elivaas-rates";
 
 function normaliseCity(city: string): string {
   if (city === "North Goa" || city === "South Goa") return "Goa";
@@ -85,6 +86,14 @@ export default async function VillasPage({
   const totalCount = filtered.length;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Fetch live prices from Elivaas API when dates are selected
+  const livePrices: Record<string, number> = {};
+  if (checkin && checkout) {
+    const states = uniqueStates(filtered);
+    const prices = await fetchLivePrices(checkin, checkout, states);
+    Object.assign(livePrices, prices);
+  }
 
   function propertyHref(slug: string) {
     const p = new URLSearchParams();
@@ -225,10 +234,20 @@ export default async function VillasPage({
                           {property.max_guests} guests
                         </span>
                       </div>
-                      <div className="ml-auto">
-                        <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
-                          Price on Request
-                        </span>
+                      <div className="ml-auto text-right">
+                        {livePrices[property.id] ? (
+                          <>
+                            <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
+                            <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
+                              ₹{livePrices[property.id].toLocaleString("en-IN")}
+                              <span className="text-[9px] font-normal text-charcoal/40 dark:text-ivory/40">/night</span>
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
+                            Price on Request
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
