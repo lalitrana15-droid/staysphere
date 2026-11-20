@@ -32,6 +32,7 @@ export default function ExperiencesPage() {
           fill
           className="object-cover opacity-60"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-charcoal/60" />
         <div className="relative z-10 text-center text-white luxury-container">

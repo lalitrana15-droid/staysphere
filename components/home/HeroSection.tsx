@@ -57,6 +57,7 @@ export function HeroSection() {
             priority={idx === 0}
             className="object-cover object-center"
             sizes="100vw"
+            unoptimized
           />
         </div>
       ))}

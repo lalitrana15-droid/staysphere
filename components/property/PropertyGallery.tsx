@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
+import { filterPropertyImages } from "@/lib/image-utils";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -49,7 +50,8 @@ function GalleryImage({
   );
 }
 
-export function PropertyGallery({ images, title }: PropertyGalleryProps) {
+export function PropertyGallery({ images: rawImages, title }: PropertyGalleryProps) {
+  const images = filterPropertyImages(rawImages);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [albumOpen, setAlbumOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);

@@ -17,9 +17,9 @@ BASE = "https://sandbox.elivaas.com" if USE_SANDBOX else "https://api.elivaas.co
 USE_CDN_PROXY = True
 CDN_BASE = "https://img.staysvacation.com"
 
-# Default to Nov 25 → Nov 30 (near-future dates for maximum sandbox availability)
-CHECKIN  = "2026-11-25"
-CHECKOUT = "2026-11-30"
+# Peak season dates for maximum property availability
+CHECKIN  = "2027-01-10"
+CHECKOUT = "2027-01-15"
 ADULTS   = 2
 PAGE_SIZE = 50
 

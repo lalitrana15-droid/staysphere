@@ -20,6 +20,7 @@ export default function AboutPage() {
           fill
           className="object-cover"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="relative z-10 luxury-container pb-12">
@@ -136,6 +137,7 @@ export default function AboutPage() {
                 fill
                 className="object-cover"
                 sizes="50vw"
+                unoptimized
               />
             </div>
           </div>

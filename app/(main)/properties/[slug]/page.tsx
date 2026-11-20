@@ -9,6 +9,7 @@ import { PropertyGallery } from "@/components/property/PropertyGallery";
 import { BookingEnquiryForm } from "@/components/property/BookingEnquiryForm";
 import { PropertyShareWhatsAppButton, PropertyEnquireWhatsAppButton } from "@/components/property/PropertyWhatsAppButtons";
 import { fetchLivePrices } from "@/lib/elivaas-rates";
+import { filterPropertyImages } from "@/lib/image-utils";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -411,7 +412,7 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                 <div className="md:hidden">
                   <p className="label-text mb-4">Gallery</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {property.images.slice(1, 5).map((img, idx) => (
+                    {filterPropertyImages(property.images).slice(1, 5).map((img, idx) => (
                       <div key={idx} className="relative aspect-square">
                         <Image
                           src={`${img}?w=600`}
