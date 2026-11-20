@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { getReferralCode } from "@/components/ReferralTracker";
 
-const WA_NUMBER = "919999999999";
+const WA_NUMBER = "919958508252";
 
 const WA_ICON = (
   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
