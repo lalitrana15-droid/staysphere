@@ -38,6 +38,8 @@ export default function VillasPage() {
   );
 }
 
+const PAGE_SIZE = 18;
+
 function VillasContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -46,6 +48,7 @@ function VillasContent() {
   const [guests, setGuests] = useState<number>(parseInt(searchParams.get("guests") ?? "0") || 0);
   const [checkin, setCheckin] = useState<string>(searchParams.get("checkin") ?? "");
   const [checkout, setCheckout] = useState<string>(searchParams.get("checkout") ?? "");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [destOpen, setDestOpen] = useState(false);
   const [destSearch, setDestSearch] = useState("");
   const destRef = useRef<HTMLDivElement>(null);
@@ -100,6 +103,9 @@ function VillasContent() {
     if (guests > 0) list = list.filter((p) => p.max_guests >= guests);
     return list;
   }, [selectedCity, guests]);
+
+  // Reset pagination when filters change
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [selectedCity, guests]);
 
   function formatDate(d: string) {
     if (!d) return "";
@@ -264,68 +270,87 @@ function VillasContent() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((property) => (
-              <Link
-                key={property.id}
-                href={propertyHref(property.slug)}
-                className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
-              >
-                <div className="relative h-60 overflow-hidden">
-                  <Image
-                    src={property.images[0]}
-                    alt={property.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  {property.has_pool && (
-                    <div className="absolute top-3 left-3">
-                      <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
-                        Pool
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute bottom-3 left-3">
-                    <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
-                      {property.city}{property.state ? `, ${property.state}` : ""}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
-                    {property.title}
-                  </h3>
-                  <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
-                    {property.short_description}
-                  </p>
-                  <div className="flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800">
-                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                      <BedDouble className="w-3 h-3" />
-                      <span className="text-[11px] font-sans">{property.bedrooms}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                      <Bath className="w-3 h-3" />
-                      <span className="text-[11px] font-sans">{property.bathrooms}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                      <Users className="w-3 h-3" />
-                      <span className="text-[11px] font-sans">{property.max_guests} guests</span>
-                    </div>
-                    {property.starting_price && (
-                      <div className="ml-auto text-right">
-                        <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
-                        <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                          ₹{property.starting_price.toLocaleString("en-IN")}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.slice(0, visibleCount).map((property, i) => (
+                <Link
+                  key={property.id}
+                  href={propertyHref(property.slug)}
+                  className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
+                >
+                  <div className="relative h-60 overflow-hidden bg-stone-100 dark:bg-stone-900">
+                    <Image
+                      src={property.images[0]}
+                      alt={property.title}
+                      fill
+                      priority={i < 6}
+                      loading={i < 6 ? "eager" : "lazy"}
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    {property.has_pool && (
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
+                          Pool
                         </span>
                       </div>
                     )}
+                    <div className="absolute bottom-3 left-3">
+                      <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
+                        {property.city}{property.state ? `, ${property.state}` : ""}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                  <div className="p-5">
+                    <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
+                      {property.title}
+                    </h3>
+                    <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
+                      {property.short_description}
+                    </p>
+                    <div className="flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800">
+                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                        <BedDouble className="w-3 h-3" />
+                        <span className="text-[11px] font-sans">{property.bedrooms}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                        <Bath className="w-3 h-3" />
+                        <span className="text-[11px] font-sans">{property.bathrooms}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
+                        <Users className="w-3 h-3" />
+                        <span className="text-[11px] font-sans">{property.max_guests} guests</span>
+                      </div>
+                      {property.starting_price && (
+                        <div className="ml-auto text-right">
+                          <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
+                          <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
+                            ₹{property.starting_price.toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {visibleCount < filtered.length && (
+              <div className="mt-12 text-center">
+                <p className="text-xs font-sans text-charcoal/40 dark:text-ivory/40 mb-4">
+                  Showing {visibleCount} of {filtered.length} villas
+                </p>
+                <button
+                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  className="px-10 py-3 border border-charcoal/20 dark:border-ivory/20 text-[11px] font-sans font-semibold tracking-[0.15em] uppercase text-charcoal dark:text-ivory hover:bg-charcoal hover:text-white dark:hover:bg-ivory dark:hover:text-charcoal transition-colors duration-300"
+                >
+                  Load more villas
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
