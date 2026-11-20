@@ -235,19 +235,22 @@ export default async function VillasPage({
                         </span>
                       </div>
                       <div className="ml-auto text-right">
-                        {(livePrices[property.id] || property.starting_price) ? (
-                          <>
-                            <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
-                            <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                              ₹{(livePrices[property.id] || property.starting_price!).toLocaleString("en-IN")}
-                              <span className="text-[9px] font-normal text-charcoal/40 dark:text-ivory/40">/night</span>
+                        {(() => {
+                          const p = livePrices[property.id] || (property.starting_price !== 79152 ? property.starting_price : null);
+                          return p ? (
+                            <>
+                              <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
+                              <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
+                                ₹{p.toLocaleString("en-IN")}
+                                <span className="text-[9px] font-normal text-charcoal/40 dark:text-ivory/40">/night</span>
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
+                              Price on Request
                             </span>
-                          </>
-                        ) : (
-                          <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
-                            Price on Request
-                          </span>
-                        )}
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>

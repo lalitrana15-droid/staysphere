@@ -414,11 +414,12 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                     {property.images.slice(1, 5).map((img, idx) => (
                       <div key={idx} className="relative aspect-square">
                         <Image
-                          src={img}
+                          src={`${img}?w=600`}
                           alt={`${property.title} ${idx + 2}`}
                           fill
                           className="object-cover"
                           sizes="50vw"
+                          unoptimized
                         />
                       </div>
                     ))}
@@ -431,12 +432,14 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                 <div className="sticky top-28">
                   {/* Price display */}
                   <div className="mb-5 pb-5 border-b border-stone-200 dark:border-stone-800">
-                    {(pricePerNight || property.starting_price) ? (
+                    {(() => {
+                      const displayPrice = pricePerNight || (property.starting_price !== 79152 ? property.starting_price : null);
+                      return displayPrice ? (
                       <div>
                         <p className="label-text mb-1">Starting From</p>
                         <div className="flex items-baseline gap-1">
                           <span className="font-serif text-3xl font-light text-charcoal dark:text-ivory">
-                            ₹{(pricePerNight || property.starting_price!).toLocaleString("en-IN")}
+                            ₹{displayPrice.toLocaleString("en-IN")}
                           </span>
                           <span className="text-xs font-sans text-charcoal/40 dark:text-ivory/40">/night</span>
                         </div>
@@ -457,7 +460,8 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                         <p className="label-text mb-1">Pricing</p>
                         <p className="font-serif text-2xl font-light text-charcoal dark:text-ivory">Price on Request</p>
                       </div>
-                    )}
+                    );
+                    })()}
                   </div>
 
                   <BookingEnquiryForm
