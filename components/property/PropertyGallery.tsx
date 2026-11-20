@@ -16,6 +16,8 @@ function GalleryImage({
   priority,
   className,
   sizes,
+  loading,
+  onError,
 }: {
   src: string;
   alt: string;
@@ -23,16 +25,17 @@ function GalleryImage({
   priority?: boolean;
   className?: string;
   sizes?: string;
+  loading?: "lazy" | "eager";
+  onError?: () => void;
 }) {
   const [errored, setErrored] = useState(false);
 
-  if (errored) {
-    return (
-      <div className="absolute inset-0 bg-stone-100 dark:bg-stone-900 flex items-center justify-center">
-        <span className="text-xs text-stone-400">Photo unavailable</span>
-      </div>
-    );
-  }
+  const handleError = () => {
+    setErrored(true);
+    onError?.();
+  };
+
+  if (errored) return null;
 
   return (
     <Image
@@ -42,8 +45,9 @@ function GalleryImage({
       priority={priority}
       className={className}
       sizes={sizes}
+      loading={loading}
       unoptimized
-      onError={() => setErrored(true)}
+      onError={handleError}
     />
   );
 }
@@ -52,6 +56,10 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [gridOpen, setGridOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [erroredIndices, setErroredIndices] = useState<Set<number>>(new Set());
+
+  const markErrored = (idx: number) =>
+    setErroredIndices((prev) => new Set([...prev, idx]));
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
@@ -138,22 +146,27 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
             </button>
           </div>
           <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-w-7xl mx-auto">
-            {images.map((img, idx) => (
-              <div
-                key={idx}
-                className="relative aspect-square cursor-pointer overflow-hidden group"
-                onClick={() => openLightbox(idx)}
-              >
-                <GalleryImage
-                  src={img}
-                  alt={`${title} photo ${idx + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="25vw"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-              </div>
-            ))}
+            {images.map((img, idx) => {
+              if (erroredIndices.has(idx)) return null;
+              return (
+                <div
+                  key={idx}
+                  className="relative aspect-square cursor-pointer overflow-hidden group bg-stone-900"
+                  onClick={() => openLightbox(idx)}
+                >
+                  <GalleryImage
+                    src={img}
+                    alt={`${title} photo ${idx + 1}`}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="25vw"
+                    loading="lazy"
+                    onError={() => markErrored(idx)}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -213,23 +226,28 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
 
           {/* Thumbnail strip */}
           <div className="flex-shrink-0 flex gap-1.5 overflow-x-auto px-4 py-3 bg-black/50">
-            {images.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`relative flex-shrink-0 w-14 h-10 overflow-hidden transition-all ${
-                  idx === currentIndex ? "ring-2 ring-gold-500 opacity-100" : "opacity-50 hover:opacity-80"
-                }`}
-              >
-                <GalleryImage
-                  src={img}
-                  alt={`thumb ${idx + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="56px"
-                />
-              </button>
-            ))}
+            {images.map((img, idx) => {
+              if (erroredIndices.has(idx)) return null;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`relative flex-shrink-0 w-14 h-10 overflow-hidden transition-all ${
+                    idx === currentIndex ? "ring-2 ring-gold-500 opacity-100" : "opacity-50 hover:opacity-80"
+                  }`}
+                >
+                  <GalleryImage
+                    src={img}
+                    alt={`thumb ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="56px"
+                    loading="lazy"
+                    onError={() => markErrored(idx)}
+                  />
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
