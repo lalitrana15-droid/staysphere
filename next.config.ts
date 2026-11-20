@@ -23,6 +23,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "villabase.imagesque.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.elivaas.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.elivaas.com",
+      },
     ],
   },
   experimental: {
