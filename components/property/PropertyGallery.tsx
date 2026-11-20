@@ -100,7 +100,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
         {/* Main image */}
         <div
           className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer group"
-          onClick={() => openLightbox(0)}
+          onClick={() => setAlbumOpen(true)}
         >
           <GalleryImage
             src={sized(images[0], 1200)}
@@ -118,7 +118,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           <div
             key={idx}
             className="relative overflow-hidden cursor-pointer group"
-            onClick={() => openLightbox(idx + 1)}
+            onClick={() => setAlbumOpen(true)}
           >
             <GalleryImage
               src={sized(img, 800)}
@@ -131,15 +131,12 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
 
             {/* Last thumbnail overlay */}
             {idx === 3 && images.length > 5 && (
-              <button
-                className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1.5 hover:bg-black/60 transition-colors"
-                onClick={(e) => { e.stopPropagation(); setAlbumOpen(true); }}
-              >
+              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1.5 pointer-events-none">
                 <Images className="w-5 h-5 text-white" />
                 <span className="text-xs font-sans font-medium text-white tracking-wide">
                   +{images.length - 4} photos
                 </span>
-              </button>
+              </div>
             )}
           </div>
         ))}
@@ -204,7 +201,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           {/* Top bar */}
           <div className="flex items-center justify-between px-5 py-4 flex-shrink-0">
             <button
-              onClick={() => { setLightboxOpen(false); setAlbumOpen(true); }}
+              onClick={() => { setLightboxOpen(false); setTimeout(() => setAlbumOpen(true), 50); }}
               className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-sans transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
