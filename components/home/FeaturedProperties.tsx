@@ -108,11 +108,12 @@ function PropertyCard({ property }: { property: typeof properties[0] }) {
       {/* Image Carousel */}
       <div className="relative overflow-hidden aspect-[4/3]">
         <Image
-          src={images[imgIndex]}
+          src={`${images[imgIndex]}?w=800`}
           alt={property.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 

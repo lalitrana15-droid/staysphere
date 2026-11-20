@@ -137,7 +137,7 @@ export default async function VillasPage({
               >
                 <div className="relative h-60 overflow-hidden bg-stone-100 dark:bg-stone-900">
                   <Image
-                    src={property.images[0]}
+                    src={`${property.images[0]}?w=800`}
                     alt={property.title}
                     fill
                     priority={i < 6}

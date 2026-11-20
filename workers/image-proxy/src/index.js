@@ -7,8 +7,11 @@ export default {
       return new Response("Method not allowed", { status: 405 });
     }
 
-    // Build the Elivaas image URL from the path
-    const imageUrl = `https://images.elivaas.com${url.pathname}`;
+    // Build the Elivaas image URL with optional resize
+    const upstream = new URL(`https://images.elivaas.com${url.pathname}`);
+    const w = url.searchParams.get("w");
+    if (w) upstream.searchParams.set("width", w);
+    const imageUrl = upstream.toString();
 
     const response = await fetch(imageUrl, {
       headers: {

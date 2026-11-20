@@ -52,6 +52,10 @@ function GalleryImage({
   );
 }
 
+function sized(url: string, w: number) {
+  return `${url}?w=${w}`;
+}
+
 export function PropertyGallery({ images, title }: PropertyGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [gridOpen, setGridOpen] = useState(false);
@@ -86,7 +90,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           onClick={() => openLightbox(0)}
         >
           <GalleryImage
-            src={images[0]}
+            src={sized(images[0], 1200)}
             alt={title}
             fill
             priority
@@ -104,7 +108,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
             onClick={() => openLightbox(idx + 1)}
           >
             <GalleryImage
-              src={img}
+              src={sized(img, 800)}
               alt={`${title} photo ${idx + 2}`}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -155,7 +159,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
                   onClick={() => openLightbox(idx)}
                 >
                   <GalleryImage
-                    src={img}
+                    src={sized(img, 600)}
                     alt={`${title} photo ${idx + 1}`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -200,7 +204,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           <div className="flex-1 flex items-center justify-center relative px-16 min-h-0">
             <div className="relative w-full h-full max-w-5xl">
               <GalleryImage
-                src={images[currentIndex]}
+                src={sized(images[currentIndex], 1600)}
                 alt={`${title} photo ${currentIndex + 1}`}
                 fill
                 priority
@@ -237,7 +241,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
                   }`}
                 >
                   <GalleryImage
-                    src={img}
+                    src={sized(img, 200)}
                     alt={`thumb ${idx + 1}`}
                     fill
                     className="object-cover"
