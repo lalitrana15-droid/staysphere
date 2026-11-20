@@ -42,6 +42,14 @@ export interface Property {
   highlights?: string[];
   location_description?: string;
   sections?: { title: string; content: string }[];
+  spaces?: { title: string; description: string }[];
+  google_map_embed?: string;
+  google_maps_link?: string;
+  area?: string;
+  security_fee?: number;
+  extra_adult_rate?: number;
+  brochure_url?: string;
+  brand?: string;
   created_at?: string;
 }
 

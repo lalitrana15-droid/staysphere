@@ -199,6 +199,22 @@ def map_to_property(item: dict):
         if title and content:
             sections.append({"title": title, "content": content})
 
+    # Spaces: room-level breakdown (pool, bedrooms, kitchen etc.)
+    spaces = []
+    for s in item.get("spaces") or []:
+        title = (s.get("title") or "").strip()
+        desc  = strip_html(s.get("description") or "").strip()
+        if title:
+            spaces.append({"title": title, "description": desc})
+
+    google_map       = (item.get("googleMapEmbedLink") or "").strip()
+    google_maps_link = (item.get("googleMapsBusinessLink") or "").strip()
+    area             = (item.get("location") or "").strip()
+    security_fee     = item.get("securityFee") or 0
+    extra_adult_rate = item.get("extraAdultRate") or 0
+    brochure_url     = (item.get("nonBrandedBrochure") or item.get("brandedBrochure") or "").strip()
+    brand            = (item.get("brand") or "").strip()
+
     description   = strip_html(item.get("description") or "")
     short_desc    = description[:220].rstrip()
     if len(description) > 220:
@@ -228,6 +244,14 @@ def map_to_property(item: dict):
         "amenities":        list(dict.fromkeys(amenities)),  # deduplicate
         "images":           images,
         "sections":         sections,
+        "spaces":           spaces,
+        "google_map_embed": google_map,
+        "google_maps_link": google_maps_link,
+        "area":             area,
+        "security_fee":     security_fee,
+        "extra_adult_rate": extra_adult_rate,
+        "brochure_url":     brochure_url,
+        "brand":            brand,
         "featured":         False,
         "price_on_request": is_sold_out or per_night is None,
         "starting_price":   per_night,
@@ -250,6 +274,24 @@ def prop_to_ts(p: dict) -> str:
             for s in sections
         )
         sections_ts = f"\n    sections: [\n      {inner}\n    ],"
+
+    spaces = p.get("spaces") or []
+    spaces_ts = ""
+    if spaces:
+        inner = ",\n      ".join(
+            f'{{ title: {to_ts_string(s["title"])}, description: {to_ts_string(s["description"])} }}'
+            for s in spaces
+        )
+        spaces_ts = f"\n    spaces: [\n      {inner}\n    ],"
+
+    map_ts        = f'\n    google_map_embed: {to_ts_string(p["google_map_embed"])},' if p.get("google_map_embed") else ""
+    gmaps_ts      = f'\n    google_maps_link: "{p["google_maps_link"]}",' if p.get("google_maps_link") else ""
+    area_ts       = f'\n    area: "{p["area"]}",' if p.get("area") else ""
+    sec_fee_ts    = f'\n    security_fee: {p["security_fee"]},' if p.get("security_fee") else ""
+    extra_rate_ts = f'\n    extra_adult_rate: {p["extra_adult_rate"]},' if p.get("extra_adult_rate") else ""
+    brochure_ts   = f'\n    brochure_url: "{p["brochure_url"]}",' if p.get("brochure_url") else ""
+    brand_ts      = f'\n    brand: "{p["brand"]}",' if p.get("brand") else ""
+
     return f"""  {{
     id: "{p['id']}",
     slug: "{p['slug']}",
@@ -273,7 +315,7 @@ def prop_to_ts(p: dict) -> str:
       {images_ts}
     ],
     featured: false,
-    price_on_request: {str(p['price_on_request']).lower()},{starting_price_ts}{sections_ts}
+    price_on_request: {str(p['price_on_request']).lower()},{starting_price_ts}{sections_ts}{spaces_ts}{map_ts}{gmaps_ts}{area_ts}{sec_fee_ts}{extra_rate_ts}{brochure_ts}{brand_ts}
     property_type: "{p['property_type']}",
   }}"""
 
