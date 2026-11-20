@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, ChevronRight, Grid3x3 } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
 
 interface PropertyGalleryProps {
   images: string[];
   title: string;
+}
+
+function sized(url: string, w: number) {
+  return `${url}?w=${w}`;
 }
 
 function GalleryImage({
@@ -29,14 +33,7 @@ function GalleryImage({
   onError?: () => void;
 }) {
   const [errored, setErrored] = useState(false);
-
-  const handleError = () => {
-    setErrored(true);
-    onError?.();
-  };
-
   if (errored) return null;
-
   return (
     <Image
       src={src}
@@ -47,18 +44,14 @@ function GalleryImage({
       sizes={sizes}
       loading={loading}
       unoptimized
-      onError={handleError}
+      onError={() => { setErrored(true); onError?.(); }}
     />
   );
 }
 
-function sized(url: string, w: number) {
-  return `${url}?w=${w}`;
-}
-
 export function PropertyGallery({ images, title }: PropertyGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [gridOpen, setGridOpen] = useState(false);
+  const [albumOpen, setAlbumOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [erroredIndices, setErroredIndices] = useState<Set<number>>(new Set());
 
@@ -68,7 +61,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
     setLightboxOpen(true);
-    setGridOpen(false);
+    setAlbumOpen(false);
   };
 
   const prev = useCallback(
@@ -80,11 +73,31 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
     [images.length]
   );
 
+  // Keyboard nav in lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "Escape") setLightboxOpen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxOpen, prev, next]);
+
+  // Lock body scroll when album or lightbox open
+  useEffect(() => {
+    document.body.style.overflow = albumOpen || lightboxOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [albumOpen, lightboxOpen]);
+
+  const visibleImages = images.filter((_, i) => !erroredIndices.has(i));
+
   return (
     <>
-      {/* Gallery Grid — 1 main + 4 thumbnails */}
+      {/* ── Preview Grid: 1 main + 4 thumbnails ── */}
       <div className="grid grid-cols-4 grid-rows-2 gap-1.5 h-[500px]">
-        {/* Main Image */}
+        {/* Main image */}
         <div
           className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer group"
           onClick={() => openLightbox(0)}
@@ -97,10 +110,10 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="50vw"
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
         </div>
 
-        {/* 4 secondary thumbnails */}
+        {/* 4 thumbnails */}
         {images.slice(1, 5).map((img, idx) => (
           <div
             key={idx}
@@ -109,23 +122,20 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
           >
             <GalleryImage
               src={sized(img, 800)}
-              alt={`${title} photo ${idx + 2}`}
+              alt={`${title} ${idx + 2}`}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="25vw"
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
 
-            {/* "View all photos" overlay on last thumbnail */}
+            {/* Last thumbnail overlay */}
             {idx === 3 && images.length > 5 && (
               <button
-                className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1 hover:bg-black/60 transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setGridOpen(true);
-                }}
+                className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1.5 hover:bg-black/60 transition-colors"
+                onClick={(e) => { e.stopPropagation(); setAlbumOpen(true); }}
               >
-                <Grid3x3 className="w-5 h-5 text-white" />
+                <Images className="w-5 h-5 text-white" />
                 <span className="text-xs font-sans font-medium text-white tracking-wide">
                   +{images.length - 4} photos
                 </span>
@@ -135,39 +145,52 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
         ))}
       </div>
 
-      {/* All Photos Grid Modal */}
-      {gridOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 overflow-y-auto">
-          <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-black/80 backdrop-blur-sm">
-            <span className="text-white font-sans text-sm">
-              {title} — {images.length} photos
-            </span>
+      {/* View all button below grid */}
+      {images.length > 5 && (
+        <button
+          onClick={() => setAlbumOpen(true)}
+          className="mt-3 flex items-center gap-2 text-xs font-sans font-medium tracking-[0.1em] uppercase text-charcoal/50 dark:text-ivory/50 hover:text-charcoal dark:hover:text-ivory transition-colors"
+        >
+          <Images className="w-3.5 h-3.5" />
+          View all {images.length} photos
+        </button>
+      )}
+
+      {/* ── Album View (Lost Traveller style) ── */}
+      {albumOpen && (
+        <div className="fixed inset-0 z-50 bg-white dark:bg-[#0a0a0a] overflow-y-auto">
+          {/* Sticky header */}
+          <div className="sticky top-0 z-10 flex items-center gap-4 px-4 py-3 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-800">
             <button
-              onClick={() => setGridOpen(false)}
-              className="text-white/70 hover:text-white transition-colors"
+              onClick={() => setAlbumOpen(false)}
+              className="flex items-center gap-1.5 text-sm font-sans text-charcoal/60 dark:text-ivory/60 hover:text-charcoal dark:hover:text-ivory transition-colors"
             >
-              <X className="w-6 h-6" />
+              <ChevronLeft className="w-4 h-4" />
+              Back
             </button>
+            <span className="text-sm font-sans text-charcoal/40 dark:text-ivory/40">
+              {visibleImages.length} photos
+            </span>
           </div>
-          <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-w-7xl mx-auto">
+
+          {/* Masonry grid — natural image heights */}
+          <div className="columns-2 md:columns-3 gap-0.5 p-0.5">
             {images.map((img, idx) => {
               if (erroredIndices.has(idx)) return null;
               return (
                 <div
                   key={idx}
-                  className="relative aspect-square cursor-pointer overflow-hidden group bg-stone-900"
+                  className="break-inside-avoid mb-0.5 cursor-pointer overflow-hidden group"
                   onClick={() => openLightbox(idx)}
                 >
-                  <GalleryImage
-                    src={sized(img, 600)}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sized(img, 800)}
                     alt={`${title} photo ${idx + 1}`}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="25vw"
-                    loading="lazy"
+                    loading={idx < 6 ? "eager" : "lazy"}
+                    className="w-full block transition-transform duration-500 group-hover:scale-105"
                     onError={() => markErrored(idx)}
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                 </div>
               );
             })}
@@ -175,34 +198,32 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
         </div>
       )}
 
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       {lightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col">
+        <div className="fixed inset-0 z-[60] bg-black flex flex-col">
           {/* Top bar */}
-          <div className="flex items-center justify-between px-6 py-4 flex-shrink-0">
-            <span className="text-white/60 text-sm font-sans">
+          <div className="flex items-center justify-between px-5 py-4 flex-shrink-0">
+            <button
+              onClick={() => { setLightboxOpen(false); setAlbumOpen(true); }}
+              className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-sans transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              All photos
+            </button>
+            <span className="text-white/50 text-xs font-sans">
               {currentIndex + 1} / {images.length}
             </span>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => { setLightboxOpen(false); setGridOpen(true); }}
-                className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs font-sans transition-colors"
-              >
-                <Grid3x3 className="w-4 h-4" />
-                All photos
-              </button>
-              <button
-                onClick={() => setLightboxOpen(false)}
-                className="text-white/70 hover:text-white transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="text-white/60 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Main image */}
-          <div className="flex-1 flex items-center justify-center relative px-16 min-h-0">
-            <div className="relative w-full h-full max-w-5xl">
+          {/* Image */}
+          <div className="flex-1 flex items-center justify-center relative min-h-0 px-14">
+            <div className="relative w-full h-full">
               <GalleryImage
                 src={sized(images[currentIndex], 1600)}
                 alt={`${title} photo ${currentIndex + 1}`}
@@ -214,45 +235,19 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
             </div>
           </div>
 
-          {/* Nav buttons */}
+          {/* Nav */}
           <button
             onClick={prev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-3"
+            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 text-white/60 hover:text-white transition-colors"
           >
-            <ChevronLeft className="w-7 h-7" />
+            <ChevronLeft className="w-8 h-8" />
           </button>
           <button
             onClick={next}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-3"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-white/60 hover:text-white transition-colors"
           >
-            <ChevronRight className="w-7 h-7" />
+            <ChevronRight className="w-8 h-8" />
           </button>
-
-          {/* Thumbnail strip */}
-          <div className="flex-shrink-0 flex gap-1.5 overflow-x-auto px-4 py-3 bg-black/50">
-            {images.map((img, idx) => {
-              if (erroredIndices.has(idx)) return null;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`relative flex-shrink-0 w-14 h-10 overflow-hidden transition-all ${
-                    idx === currentIndex ? "ring-2 ring-gold-500 opacity-100" : "opacity-50 hover:opacity-80"
-                  }`}
-                >
-                  <GalleryImage
-                    src={sized(img, 200)}
-                    alt={`thumb ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="56px"
-                    loading="lazy"
-                    onError={() => markErrored(idx)}
-                  />
-                </button>
-              );
-            })}
-          </div>
         </div>
       )}
     </>
