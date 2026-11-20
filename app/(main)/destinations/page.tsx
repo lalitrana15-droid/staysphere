@@ -22,6 +22,7 @@ export default function DestinationsPage() {
           fill
           className="object-cover opacity-50"
           priority
+          unoptimized
         />
         <div className="relative z-10 text-center text-white luxury-container">
           <p className="text-[10px] font-sans font-medium tracking-[0.3em] uppercase text-gold-300 mb-4">

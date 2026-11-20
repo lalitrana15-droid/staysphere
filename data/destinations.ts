@@ -470,6 +470,37 @@ export const destinations: Destination[] = [
     best_time_to_visit: "October to February",
   },
   {
+    id: "36",
+    slug: "jodhpur",
+    name: "Jodhpur",
+    country: "India",
+    state: "Rajasthan",
+    description:
+      "The Blue City of Rajasthan rises dramatically from the Thar Desert, its indigo-washed old city spilling beneath the monumental Mehrangarh Fort. Jodhpur is a city of contrasts — ancient sandstone havelis, vibrant bazaars, and a culinary tradition rooted in royal kitchens, all set against an otherworldly desert landscape.",
+    short_description: "The Blue City — a desert fortress rising from the Thar",
+    hero_image:
+      "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1920&q=90",
+    gallery_images: [],
+    featured: false,
+    highlights: ["Mehrangarh Fort", "Umaid Bhawan Palace", "Jaswant Thada", "Sardar Market"],
+    best_time_to_visit: "October to March",
+  },
+  {
+    id: "37",
+    slug: "bali",
+    name: "Bali",
+    country: "Indonesia",
+    description:
+      "The Island of the Gods captivates with its emerald rice terraces, ancient temples, and world-class surf. Bali's luxury villas offer an extraordinary blend of Balinese architecture, lush tropical gardens, and serene infinity pools overlooking the Indian Ocean or the sacred volcanic landscape.",
+    short_description: "The Island of the Gods — temples, rice terraces, and tropical luxury",
+    hero_image:
+      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=90",
+    gallery_images: [],
+    featured: false,
+    highlights: ["Tanah Lot Temple", "Ubud Rice Terraces", "Seminyak Beach", "Mount Agung"],
+    best_time_to_visit: "April to October",
+  },
+  {
     id: "35",
     slug: "delhi-ncr",
     name: "Delhi NCR",
