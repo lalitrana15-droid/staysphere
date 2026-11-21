@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendMail, MAIL_FROM_ADDRESS } from "@/lib/mailer";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,11 +32,9 @@ export async function POST(request: NextRequest) {
       if (error) console.error("Supabase error:", error);
     }
 
-    // Send email notification via Resend
-    if (process.env.RESEND_API_KEY) {
+    // Send email notification to the team
+    {
       try {
-        const { Resend } = await import("resend");
-        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const lines: string[] = [];
         if (body.property_id) lines.push(`<b>Property:</b> ${body.property_id}`);
@@ -50,9 +49,9 @@ export async function POST(request: NextRequest) {
         lines.push(`<b>Source:</b> ${body.source || "contact"}`);
         if (body.ref_agent_code) lines.push(`<b>Agent:</b> ${body.ref_agent_code}`);
 
-        await resend.emails.send({
-          from: "StaysVacation <noreply@staysvacation.com>",
-          to: process.env.ENQUIRY_EMAIL || "enquiries@staysvacation.com",
+        await sendMail({
+          to: process.env.ENQUIRY_EMAIL || MAIL_FROM_ADDRESS,
+          replyTo: body.email || undefined,
           subject: `New Enquiry${body.property_id ? ` — ${body.property_id}` : ""}${body.ref_agent_code ? ` [${body.ref_agent_code}]` : ""}`,
           html: `<div style="font-family:sans-serif;font-size:15px;line-height:1.7;color:#222">
             <h2 style="margin-bottom:20px">New Enquiry — StaysVacation</h2>
@@ -60,7 +59,7 @@ export async function POST(request: NextRequest) {
           </div>`,
         });
       } catch (emailErr) {
-        console.error("Resend error:", emailErr);
+        console.error("Mail error:", emailErr);
       }
     }
 
