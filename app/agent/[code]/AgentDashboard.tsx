@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { sizedImage } from "@/lib/image-utils";
 import Link from "next/link";
 import {
   TrendingUp, Users, IndianRupee, Link as LinkIcon,
@@ -705,7 +706,7 @@ export function AgentDashboard({
                     {/* Image */}
                     {prop.images?.[0] && (
                       <div className="relative h-44 overflow-hidden">
-                        <img src={prop.images[0]} alt={prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={sizedImage(prop.images[0], 600)} alt={prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         {prop.featured && (
                           <span className="absolute top-3 left-3 text-[9px] font-sans font-medium tracking-[0.15em] uppercase bg-gold-500 text-white px-2 py-0.5">
                             Featured
@@ -751,7 +752,7 @@ export function AgentDashboard({
                 {/* Hero image carousel (show first 3) */}
                 {prop.images?.[0] && (
                   <div className="relative h-56 sm:h-72 overflow-hidden">
-                    <img src={prop.images[0]} alt={prop.title} className="w-full h-full object-cover" />
+                    <img src={sizedImage(prop.images[0], 600)} alt={prop.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <button onClick={() => setViewingProp(null)} className="absolute top-4 right-4 w-8 h-8 bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors">
                       <X className="w-4 h-4 text-white" />
@@ -767,7 +768,7 @@ export function AgentDashboard({
                 {prop.images && prop.images.length > 1 && (
                   <div className="flex gap-1.5 px-4 pt-3">
                     {prop.images.slice(1, 5).map((img, i) => (
-                      <img key={i} src={img} alt="" className="w-16 h-12 object-cover flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity" />
+                      <img key={i} src={sizedImage(img, 300)} alt="" className="w-16 h-12 object-cover flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity" />
                     ))}
                     {prop.images.length > 5 && (
                       <div className="w-16 h-12 bg-stone-100 dark:bg-stone-800 flex items-center justify-center flex-shrink-0">
@@ -993,7 +994,7 @@ export function AgentDashboard({
                 return (
                   <div key={prop.id} className="flex items-center gap-4 px-6 py-4">
                     {prop.images?.[0] && (
-                      <img src={prop.images[0]} alt={prop.title} className="w-16 h-12 object-cover flex-shrink-0" />
+                      <img src={sizedImage(prop.images[0], 600)} alt={prop.title} className="w-16 h-12 object-cover flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-sans font-medium text-charcoal dark:text-ivory truncate">{prop.title}</p>

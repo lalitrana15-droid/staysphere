@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { sizedImage } from "@/lib/image-utils";
 import Image from "next/image";
 import { Plus, BedDouble, Bath, Users, Waves, Edit, Eye } from "lucide-react";
 import { properties } from "@/data/properties";
@@ -56,7 +57,7 @@ export default function AdminPropertiesPage() {
                     <div className="flex items-center gap-4">
                       <div className="relative w-12 h-10 flex-shrink-0 overflow-hidden bg-stone-100 dark:bg-stone-900">
                         <Image
-                          src={property.images[0]}
+                          src={sizedImage(property.images[0], 400)}
                           alt={property.title}
                           fill
                           className="object-cover"

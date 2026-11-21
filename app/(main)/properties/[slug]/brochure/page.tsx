@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { sizedImage } from "@/lib/image-utils";
 import Image from "next/image";
 import { getPropertyBySlug } from "@/data/properties";
 import { PrintButton } from "@/components/property/PrintButton";
@@ -17,8 +18,8 @@ export default async function PropertyBrochurePage({ params, searchParams }: Pro
   const isBranded = branded !== "false";
 
   // Split images: hero + gallery (all remaining, no blanks)
-  const heroImg = property.images[0];
-  const galleryImgs = property.images.slice(1); // images[1..] for gallery
+  const heroImg = sizedImage(property.images[0], 1600);
+  const galleryImgs = property.images.slice(1).map((u) => sizedImage(u, 1200)); // images[1..] for gallery
 
   // images[1] shown full-width as gallery opener; images[2..] grouped into rows
   const galleryRemainder = galleryImgs.slice(1);

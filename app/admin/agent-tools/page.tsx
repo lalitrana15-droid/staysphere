@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { sizedImage } from "@/lib/image-utils";
 import Image from "next/image";
 import { FileText, BedDouble, Bath, Users, Eye } from "lucide-react";
 import { properties } from "@/data/properties";
@@ -85,7 +86,7 @@ export default function AgentToolsPage() {
                         <div className="flex items-center gap-3">
                           <div className="relative w-10 h-8 flex-shrink-0 overflow-hidden bg-stone-100 dark:bg-stone-900">
                             <Image
-                              src={p.images[0]}
+                              src={sizedImage(p.images[0], 400)}
                               alt={p.title}
                               fill
                               className="object-cover"

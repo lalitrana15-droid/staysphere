@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getPropertyBySlug } from "@/data/properties";
-import { filterPropertyImages } from "@/lib/image-utils";
+import { filterPropertyImages, sizedImage } from "@/lib/image-utils";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturedVillas } from "@/components/home/FeaturedVillas";
 import { FeaturedDestinations } from "@/components/home/FeaturedDestinations";
@@ -28,7 +28,7 @@ function heroImages(): string[] {
     const p = getPropertyBySlug(slug);
     return p ? filterPropertyImages(p.images)[0] : undefined;
   }).filter((u): u is string => !!u && u.startsWith("https://"));
-  return imgs.map((u) => `${u}?w=1920`);
+  return imgs.map((u) => sizedImage(u, 1920));
 }
 
 export default function HomePage() {

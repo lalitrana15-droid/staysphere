@@ -9,7 +9,7 @@ import { PropertyGallery } from "@/components/property/PropertyGallery";
 import { BookingEnquiryForm } from "@/components/property/BookingEnquiryForm";
 import { PropertyShareWhatsAppButton, PropertyEnquireWhatsAppButton } from "@/components/property/PropertyWhatsAppButtons";
 import { fetchLivePrices } from "@/lib/elivaas-rates";
-import { filterPropertyImages } from "@/lib/image-utils";
+import { filterPropertyImages, sizedImage } from "@/lib/image-utils";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${property.title} | StaysVacation`,
       description: property.short_description,
-      images: [{ url: property.images[0] }],
+      images: [{ url: sizedImage(property.images[0], 1200) }],
     },
   };
 }
@@ -101,7 +101,7 @@ export default async function PropertyPage({ params, searchParams }: Props) {
     "@type": "LodgingBusiness",
     name: property.title,
     description: property.description,
-    image: property.images,
+    image: property.images.slice(0, 10).map((u) => sizedImage(u, 1200)),
     address: {
       "@type": "PostalAddress",
       addressLocality: property.city,

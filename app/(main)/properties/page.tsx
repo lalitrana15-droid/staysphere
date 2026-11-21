@@ -7,7 +7,7 @@ import { VillasSearchBar } from "@/components/property/VillasSearchBar";
 import { PropertyFilters } from "@/components/property/PropertyFilters";
 import { ListingToolbar } from "@/components/property/ListingToolbar";
 import { fetchLivePrices, uniqueStates } from "@/lib/elivaas-rates";
-import { filterPropertyImages } from "@/lib/image-utils";
+import { filterPropertyImages, sizedImage } from "@/lib/image-utils";
 import {
   applyFilters,
   facetCounts,
@@ -249,7 +249,7 @@ function VillaCard({
   price: number | null;
   priority: boolean;
 }) {
-  const image = filterPropertyImages(property.images)[0] ?? property.images[0];
+  const image = sizedImage(filterPropertyImages(property.images)[0] ?? property.images[0], 800);
   const list = view === "list";
 
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { properties } from "@/data/properties";
-import { filterPropertyImages } from "@/lib/image-utils";
+import { filterPropertyImages, sizedImage } from "@/lib/image-utils";
 import { VillaCarousel, type VillaCard } from "./VillaCarousel";
 
 const PLACEHOLDER_PRICE = 79152;
@@ -35,7 +35,7 @@ function pickVillas(): VillaCard[] {
     slug: p.slug,
     title: p.title,
     location: [p.city, p.state].filter(Boolean).join(", "),
-    image: filterPropertyImages(p.images)[0],
+    image: sizedImage(filterPropertyImages(p.images)[0], 800),
     badge: badgeFor(p),
     price:
       p.starting_price && p.starting_price !== PLACEHOLDER_PRICE ? p.starting_price : null,

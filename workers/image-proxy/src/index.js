@@ -13,7 +13,7 @@ export default {
     if (w) upstream.searchParams.set("width", w);
     const imageUrl = upstream.toString();
 
-    const response = await fetch(imageUrl, {
+    let response = await fetch(imageUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; StaysVacation/1.0)",
         Accept: "image/webp,image/avif,image/*,*/*",
@@ -24,6 +24,19 @@ export default {
         cacheTtl: 31536000,
       },
     });
+
+    // Some originals 404 without a width; retry once with a large one
+    if (!response.ok && !w) {
+      const retry = new URL(upstream);
+      retry.searchParams.set("width", "2000");
+      response = await fetch(retry.toString(), {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; StaysVacation/1.0)",
+          Accept: "image/webp,image/avif,image/*,*/*",
+        },
+        cf: { cacheEverything: true, cacheTtl: 31536000 },
+      });
+    }
 
     if (!response.ok) {
       return new Response("Image not found", { status: 404 });
