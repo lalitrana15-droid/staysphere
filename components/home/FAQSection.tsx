@@ -43,7 +43,7 @@ export function FAQSection() {
   return (
     <section id="faq" className="section-padding bg-white dark:bg-[#0D0D0D] scroll-mt-20">
       <div className="luxury-container">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
             <p className="label-text mb-4">Questions & Answers</p>
@@ -61,7 +61,7 @@ export function FAQSection() {
                   onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                   className="flex items-start justify-between w-full text-left gap-4 group"
                 >
-                  <h3 className="font-serif text-lg font-light text-charcoal dark:text-ivory group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-200 pr-4">
+                  <h3 className="font-serif text-lg md:text-xl font-light text-charcoal dark:text-ivory group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-200 pr-4">
                     {faq.question}
                   </h3>
                   <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center border border-stone-300 dark:border-stone-700 text-charcoal/50 dark:text-ivory/50 group-hover:border-gold-500 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-all duration-200">
@@ -78,7 +78,7 @@ export function FAQSection() {
                     openIndex === idx ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
                   )}
                 >
-                  <p className="font-sans text-sm text-charcoal/60 dark:text-ivory/60 leading-relaxed pt-4">
+                  <p className="font-sans text-sm md:text-base text-charcoal/60 dark:text-ivory/60 leading-relaxed pt-4">
                     {faq.answer}
                   </p>
                 </div>
