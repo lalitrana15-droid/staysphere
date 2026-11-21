@@ -1,20 +1,23 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { BedDouble, Bath, Users, Calendar } from "lucide-react";
+import { BedDouble, Bath, Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { properties } from "@/data/properties";
 import { VillasSearchBar } from "@/components/property/VillasSearchBar";
+import { PropertyFilters } from "@/components/property/PropertyFilters";
+import { ListingToolbar } from "@/components/property/ListingToolbar";
 import { fetchLivePrices, uniqueStates } from "@/lib/elivaas-rates";
+import { filterPropertyImages } from "@/lib/image-utils";
+import {
+  applyFilters,
+  facetCounts,
+  normaliseCity,
+  parseList,
+  type ListedProperty,
+} from "@/lib/property-filters";
 
-function normaliseCity(city: string): string {
-  if (city === "North Goa" || city === "South Goa") return "Goa";
-  return city;
-}
-function cityMatches(propertyCity: string, selected: string): boolean {
-  if (propertyCity === selected) return true;
-  if (normaliseCity(propertyCity) === selected) return true;
-  return false;
-}
+const PAGE_SIZE = 24;
+const PLACEHOLDER_PRICE = 79152;
 
 const allDestinations = Array.from(
   new Map(
@@ -30,262 +33,288 @@ const allDestinations = Array.from(
   }))
   .sort((a, b) => a.city.localeCompare(b.city));
 
-const PAGE_SIZE = 24;
+type SP = {
+  city?: string;
+  guests?: string;
+  checkin?: string;
+  checkout?: string;
+  page?: string;
+  beds?: string;
+  amenities?: string;
+  types?: string;
+  sort?: string;
+  view?: string;
+};
 
-function pageHref(
-  p: number,
-  filters: { city: string; checkin: string; checkout: string; guests: number }
-) {
+function buildHref(sp: SP, page: number) {
   const params = new URLSearchParams();
-  if (filters.city) params.set("city", filters.city);
-  if (filters.checkin) params.set("checkin", filters.checkin);
-  if (filters.checkout) params.set("checkout", filters.checkout);
-  if (filters.guests > 0) params.set("guests", String(filters.guests));
-  if (p > 1) params.set("page", String(p));
+  (Object.entries(sp) as [string, string | undefined][]).forEach(([k, v]) => {
+    if (v && k !== "page") params.set(k, v);
+  });
+  if (page > 1) params.set("page", String(page));
   const qs = params.toString();
   return qs ? `/properties?${qs}` : "/properties";
 }
 
-function PaginationLink({ href, label, active }: { href: string; label: string; active?: boolean }) {
-  return (
-    <Link
-      href={href}
-      className={`px-3 py-1.5 text-xs font-sans font-medium transition-colors ${
-        active
-          ? "bg-charcoal dark:bg-ivory text-ivory dark:text-charcoal"
-          : "text-charcoal/50 dark:text-ivory/50 hover:text-charcoal dark:hover:text-ivory border border-stone-200 dark:border-stone-700 hover:border-gold-500"
-      }`}
-    >
-      {label}
-    </Link>
-  );
+function pageList(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const out: (number | "…")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) out.push("…");
+  for (let i = start; i <= end; i++) out.push(i);
+  if (end < total - 1) out.push("…");
+  out.push(total);
+  return out;
 }
 
-export default async function VillasPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    city?: string;
-    guests?: string;
-    checkin?: string;
-    checkout?: string;
-    page?: string;
-  }>;
-}) {
-  const params = await searchParams;
-  const city = params.city ?? "";
-  const guests = parseInt(params.guests ?? "0") || 0;
-  const checkin = params.checkin ?? "";
-  const checkout = params.checkout ?? "";
-  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
+export default async function VillasPage({ searchParams }: { searchParams: Promise<SP> }) {
+  const sp = await searchParams;
+  const cities = parseList(sp.city);
+  const guests = parseInt(sp.guests ?? "0") || 0;
+  const checkin = sp.checkin ?? "";
+  const checkout = sp.checkout ?? "";
+  const page = Math.max(1, parseInt(sp.page ?? "1") || 1);
+  const view = sp.view === "list" ? "list" : "grid";
+  const sort = sp.sort ?? "recommended";
 
-  let filtered = properties;
-  if (city) filtered = filtered.filter((p) => cityMatches(p.city, city));
-  if (guests > 0) filtered = filtered.filter((p) => p.max_guests >= guests);
+  const filtered = applyFilters(properties, {
+    cities,
+    guests,
+    beds: parseList(sp.beds),
+    amenities: parseList(sp.amenities),
+    types: parseList(sp.types),
+    sort,
+  });
 
   const totalCount = filtered.length;
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  // Fetch live prices from Elivaas API when dates are selected
+  // Live prices only when dates are selected
   const livePrices: Record<string, number> = {};
   if (checkin && checkout) {
-    const states = uniqueStates(filtered);
-    const prices = await fetchLivePrices(checkin, checkout, states);
-    Object.assign(livePrices, prices);
+    Object.assign(livePrices, await fetchLivePrices(checkin, checkout, uniqueStates(paginated)));
   }
 
-  function propertyHref(slug: string) {
-    const p = new URLSearchParams();
-    if (checkin) p.set("checkin", checkin);
-    if (checkout) p.set("checkout", checkout);
-    if (guests > 0) p.set("guests", String(guests));
-    const qs = p.toString();
-    return qs ? `/properties/${slug}?${qs}` : `/properties/${slug}`;
-  }
-
-  function formatDate(d: string) {
-    if (!d) return "";
-    return new Date(d + "T00:00:00").toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-    });
-  }
+  const detailQuery = new URLSearchParams();
+  if (checkin) detailQuery.set("checkin", checkin);
+  if (checkout) detailQuery.set("checkout", checkout);
+  if (guests > 0) detailQuery.set("guests", String(guests));
+  const dq = detailQuery.toString();
+  const propertyHref = (slug: string) => (dq ? `/properties/${slug}?${dq}` : `/properties/${slug}`);
 
   return (
     <div className="pt-20 min-h-screen bg-[#faf9f7] dark:bg-[#0a0a0a]">
-      {/* Hero / Search Bar */}
-      <div className="bg-white dark:bg-[#0f0f0f] border-b border-stone-200/60 dark:border-stone-800/60 py-10">
-        <div className="luxury-container">
-          <p className="label-text mb-2">Our Collection</p>
-          <h1 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory mb-8">
-            All Villas
-          </h1>
+      {/* Header + search */}
+      <div className="luxury-container pt-8 pb-8">
+        <nav className="text-xs font-sans text-charcoal/60 dark:text-ivory/60 mb-5">
+          <Link href="/" className="hover:text-gold-600">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-charcoal dark:text-ivory">Villas</span>
+        </nav>
+        <p className="text-[11px] font-sans font-semibold tracking-[0.25em] uppercase text-gold-600 dark:text-gold-400 mb-2">
+          Our Collection
+        </p>
+        <h1 className="font-serif text-4xl md:text-5xl font-normal text-charcoal dark:text-ivory mb-3">
+          Find your perfect villa
+        </h1>
+        <p className="font-sans text-sm md:text-base text-charcoal/70 dark:text-ivory/70 mb-8 max-w-2xl">
+          Discover handpicked villas for your next getaway. Search, filter and book stays across India and beyond.
+        </p>
 
-          <Suspense fallback={null}>
-            <VillasSearchBar
-              destinations={allDestinations}
-              currentCity={city}
-              currentGuests={guests}
-              currentCheckin={checkin}
-              currentCheckout={checkout}
-            />
-          </Suspense>
-
-          {/* Result count + date summary */}
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm font-sans text-charcoal/50 dark:text-ivory/50">
-            <span>
-              <span className="text-charcoal dark:text-ivory font-medium">
-                {totalCount}
-              </span>{" "}
-              villas
-              {city && (
-                <span className="text-gold-600 dark:text-gold-400">
-                  {" "}
-                  in {city}
-                </span>
-              )}
-              {guests > 0 && <span> · {guests}+ guests</span>}
-            </span>
-            {(checkin || checkout) && (
-              <span className="flex items-center gap-1.5 text-gold-600 dark:text-gold-400 text-xs font-medium">
-                <Calendar className="w-3 h-3" />
-                {checkin && formatDate(checkin)}
-                {checkin && checkout && " → "}
-                {checkout && formatDate(checkout)}
-              </span>
-            )}
-          </div>
-        </div>
+        <Suspense fallback={null}>
+          <VillasSearchBar
+            destinations={allDestinations}
+            currentCity={cities.length === 1 ? cities[0] : ""}
+            currentGuests={guests}
+            currentCheckin={checkin}
+            currentCheckout={checkout}
+          />
+        </Suspense>
       </div>
 
-      {/* Grid */}
-      <div className="luxury-container py-12">
-        {totalCount === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-charcoal/40 dark:text-ivory/40 font-sans text-sm mb-3">
-              No villas found
-            </p>
-            <Link
-              href="/properties"
-              className="text-gold-600 dark:text-gold-400 text-xs font-sans underline underline-offset-2"
-            >
-              Clear filters
-            </Link>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginated.map((property, i) => (
-                <Link
-                  key={property.id}
-                  href={propertyHref(property.slug)}
-                  className="group bg-white dark:bg-[#121212] overflow-hidden block transition-all duration-500 hover:shadow-luxury"
-                >
-                  <div className="relative h-60 overflow-hidden bg-stone-100 dark:bg-stone-900">
-                    <Image
-                      src={`${property.images[0]}?w=800`}
-                      alt={property.title}
-                      fill
-                      priority={i < 6}
-                      loading={i < 6 ? "eager" : "lazy"}
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    {property.has_pool && (
-                      <div className="absolute top-3 left-3">
-                        <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[9px] font-sans font-medium tracking-[0.12em] uppercase border border-white/30">
-                          Pool
-                        </span>
-                      </div>
-                    )}
-                    <div className="absolute bottom-3 left-3">
-                      <span className="text-white/70 text-[9px] font-sans tracking-[0.12em] uppercase">
-                        {property.city}
-                        {property.state ? `, ${property.state}` : ""}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-serif text-xl font-light text-charcoal dark:text-ivory mb-1 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300 line-clamp-1">
-                      {property.title}
-                    </h3>
-                    <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mb-4 line-clamp-2 leading-relaxed">
-                      {property.short_description}
-                    </p>
-                    <div className="flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800">
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <BedDouble className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">
-                          {property.bedrooms}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <Bath className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">
-                          {property.bathrooms}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-charcoal/40 dark:text-ivory/40">
-                        <Users className="w-3 h-3" />
-                        <span className="text-[11px] font-sans">
-                          {property.max_guests} guests
-                        </span>
-                      </div>
-                      <div className="ml-auto text-right">
-                        {(() => {
-                          const p = livePrices[property.id] || (property.starting_price !== 79152 ? property.starting_price : null);
-                          return p ? (
-                            <>
-                              <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40">from </span>
-                              <span className="text-xs font-sans font-medium text-gold-600 dark:text-gold-400">
-                                ₹{p.toLocaleString("en-IN")}
-                                <span className="text-[9px] font-normal text-charcoal/40 dark:text-ivory/40">/night</span>
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 tracking-wide uppercase">
-                              Price on Request
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+      {/* Filters + results */}
+      <div className="luxury-container pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[270px_1fr] gap-8">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <Suspense fallback={null}>
+              <PropertyFilters destinations={allDestinations} counts={facetCounts()} />
+            </Suspense>
+          </aside>
+
+          <section>
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <h2 className="font-serif text-2xl text-charcoal dark:text-ivory">
+                {totalCount} villa{totalCount === 1 ? "" : "s"}
+              </h2>
+              <Suspense fallback={null}>
+                <ListingToolbar sort={sort} view={view} />
+              </Suspense>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-14 flex items-center justify-center gap-2">
-                {page > 1 && (
-                  <PaginationLink
-                    href={pageHref(page - 1, { city, checkin, checkout, guests })}
-                    label="← Prev"
-                  />
-                )}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <PaginationLink
-                    key={p}
-                    href={pageHref(p, { city, checkin, checkout, guests })}
-                    label={String(p)}
-                    active={p === page}
-                  />
-                ))}
-                {page < totalPages && (
-                  <PaginationLink
-                    href={pageHref(page + 1, { city, checkin, checkout, guests })}
-                    label="Next →"
-                  />
-                )}
+            {totalCount === 0 ? (
+              <div className="text-center py-24 bg-white dark:bg-[#121212] rounded-2xl border border-stone-200/70 dark:border-stone-800">
+                <p className="text-charcoal/50 dark:text-ivory/50 font-sans text-sm mb-3">
+                  No villas match these filters
+                </p>
+                <Link href="/properties" className="text-gold-600 dark:text-gold-400 text-sm font-sans underline underline-offset-2">
+                  Clear all filters
+                </Link>
               </div>
+            ) : (
+              <>
+                <div
+                  className={
+                    view === "list"
+                      ? "flex flex-col gap-5"
+                      : "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
+                  }
+                >
+                  {paginated.map((property, i) => (
+                    <VillaCard
+                      key={property.id}
+                      property={property}
+                      view={view}
+                      href={propertyHref(property.slug)}
+                      price={
+                        livePrices[property.id] ||
+                        (property.starting_price && property.starting_price !== PLACEHOLDER_PRICE
+                          ? property.starting_price
+                          : null)
+                      }
+                      priority={i < 6}
+                    />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <nav className="mt-12 flex items-center justify-center gap-2" aria-label="Pagination">
+                    {page > 1 && (
+                      <Link
+                        href={buildHref(sp, page - 1)}
+                        aria-label="Previous page"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#121212] hover:border-gold-500"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </Link>
+                    )}
+                    {pageList(page, totalPages).map((p, i) =>
+                      p === "…" ? (
+                        <span key={`e${i}`} className="w-8 text-center text-charcoal/40">…</span>
+                      ) : (
+                        <Link
+                          key={p}
+                          href={buildHref(sp, p)}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-sans transition-colors ${
+                            p === page
+                              ? "bg-gold-500 text-white"
+                              : "text-charcoal/70 dark:text-ivory/70 hover:text-gold-600"
+                          }`}
+                        >
+                          {p}
+                        </Link>
+                      )
+                    )}
+                    {page < totalPages && (
+                      <Link
+                        href={buildHref(sp, page + 1)}
+                        aria-label="Next page"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#121212] hover:border-gold-500"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    )}
+                  </nav>
+                )}
+              </>
             )}
-          </>
-        )}
+          </section>
+        </div>
       </div>
     </div>
+  );
+}
+
+function VillaCard({
+  property,
+  view,
+  href,
+  price,
+  priority,
+}: {
+  property: ListedProperty;
+  view: "grid" | "list";
+  href: string;
+  price: number | null;
+  priority: boolean;
+}) {
+  const image = filterPropertyImages(property.images)[0] ?? property.images[0];
+  const list = view === "list";
+
+  return (
+    <Link
+      href={href}
+      className={`group bg-white dark:bg-[#121212] rounded-2xl overflow-hidden border border-stone-200/60 dark:border-stone-800 shadow-sm hover:shadow-xl transition-all duration-300 ${
+        list ? "flex flex-col sm:flex-row" : "block"
+      }`}
+    >
+      <div
+        className={`relative overflow-hidden bg-stone-100 dark:bg-stone-900 ${
+          list ? "sm:w-72 sm:flex-none h-56 sm:h-auto" : "aspect-[4/3]"
+        }`}
+      >
+        <Image
+          src={image}
+          alt={property.title}
+          fill
+          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          sizes={list ? "288px" : "(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"}
+          unoptimized
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+        {property.has_pool && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-gold-200/95 text-charcoal text-[10px] font-sans font-semibold tracking-[0.12em] uppercase">
+            Pool
+          </span>
+        )}
+        <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-xs font-sans">
+          <MapPin className="w-3.5 h-3.5 text-gold-300" />
+          {property.city}
+          {property.state ? `, ${property.state}` : ""}
+        </span>
+      </div>
+
+      <div className={`p-5 flex flex-col ${list ? "flex-1" : ""}`}>
+        <h3 className="font-serif text-xl text-charcoal dark:text-ivory mb-1.5 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors line-clamp-1">
+          {property.title.split("|")[0].trim()}
+        </h3>
+        <p className={`text-[13px] font-sans text-charcoal/65 dark:text-ivory/65 leading-relaxed mb-4 ${list ? "line-clamp-3" : "line-clamp-2"}`}>
+          {property.short_description}
+        </p>
+        <div className="mt-auto flex items-center gap-4 pt-3 border-t border-stone-100 dark:border-stone-800 text-charcoal/60 dark:text-ivory/60">
+          <span className="flex items-center gap-1.5 text-xs font-sans"><BedDouble className="w-4 h-4" />{property.bedrooms}</span>
+          <span className="flex items-center gap-1.5 text-xs font-sans"><Bath className="w-4 h-4" />{property.bathrooms}</span>
+          <span className="flex items-center gap-1.5 text-xs font-sans"><Users className="w-4 h-4" />{property.max_guests} guests</span>
+          <span className="ml-auto text-right whitespace-nowrap">
+            {price ? (
+              <>
+                <span className="text-[11px] font-sans text-charcoal/50 dark:text-ivory/50">from </span>
+                <span className="text-sm font-sans font-semibold text-charcoal dark:text-ivory">
+                  ₹{price.toLocaleString("en-IN")}
+                </span>
+                <span className="text-[11px] font-sans text-charcoal/50 dark:text-ivory/50">/night</span>
+              </>
+            ) : (
+              <span className="text-[10px] font-sans text-charcoal/50 dark:text-ivory/50 tracking-wide uppercase">
+                Price on Request
+              </span>
+            )}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

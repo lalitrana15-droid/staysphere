@@ -334,11 +334,15 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                     </div>
                   </div>
                   {/* Google Maps embed */}
-                  {property.google_map_embed ? (
+                  {property.google_map_embed?.startsWith("https://www.google.com/maps/embed") ? (
                     <div className="mt-2">
-                      <div
-                        className="w-full h-64 overflow-hidden border border-stone-200 dark:border-stone-800"
-                        dangerouslySetInnerHTML={{ __html: property.google_map_embed }}
+                      <iframe
+                        src={property.google_map_embed}
+                        title={`Map of ${property.title}`}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        allowFullScreen
+                        className="w-full h-64 sm:h-80 border border-stone-200 dark:border-stone-800"
                       />
                       {property.google_maps_link && (
                         <a
@@ -468,6 +472,7 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                   <BookingEnquiryForm
                     propertyTitle={property.title}
                     propertySlug={property.slug}
+                    enableBooking
                   />
 
                   {/* WhatsApp CTA */}

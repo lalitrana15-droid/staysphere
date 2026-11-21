@@ -17,73 +17,76 @@ export function Testimonials() {
     testimonials[(current + 2) % testimonials.length],
   ];
 
+  const initials = (name: string) =>
+    name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+
   return (
-    <section className="section-padding bg-ivory dark:bg-[#0A0A0A] overflow-hidden">
+    <section className="py-16 md:py-24 bg-ivory dark:bg-[#0A0A0A] overflow-hidden">
       <div className="luxury-container">
         {/* Header */}
-        <div className="text-center mb-16">
-          <p className="label-text mb-4">Guest Stories</p>
-          <h2 className="font-serif text-4xl md:text-5xl font-light text-charcoal dark:text-ivory mb-5">
+        <div className="text-center mb-12 md:mb-14">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="h-px w-12 md:w-16 bg-gold-500/60" />
+            <p className="text-[11px] md:text-xs font-sans font-semibold tracking-[0.3em] uppercase text-gold-600 dark:text-gold-400">
+              Guest Stories
+            </p>
+            <span className="h-px w-12 md:w-16 bg-gold-500/60" />
+          </div>
+          <h2 className="font-serif text-4xl md:text-5xl font-normal text-charcoal dark:text-ivory mb-4">
             What Our Guests Say
           </h2>
-          <div className="luxury-divider" />
+          <p className="font-sans text-sm md:text-base text-charcoal/60 dark:text-ivory/60 max-w-md mx-auto">
+            Real stories from travellers and families who found their perfect stay with StaysVacation.
+          </p>
         </div>
 
         {/* Testimonials */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {visible.map((testimonial, idx) => (
-            <div
-              key={`${testimonial.id}-${idx}`}
-              className={cn(
-                "bg-white dark:bg-[#121212] p-8 border transition-all duration-500",
-                idx === 0
-                  ? "border-gold-500/40 dark:border-gold-500/30"
-                  : "border-stone-200/60 dark:border-stone-800/60 opacity-80"
-              )}
-            >
-              {/* Stars */}
-              <div className="flex items-center gap-1 mb-6">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-3.5 h-3.5 fill-gold-500 text-gold-500"
-                  />
-                ))}
-              </div>
-
-              {/* Quote Mark */}
-              <p className="font-display text-5xl font-light text-gold-500/30 leading-none -mt-2 mb-3">
-                &ldquo;
-              </p>
-
-              {/* Quote */}
-              <p className="font-serif text-base font-light text-charcoal/80 dark:text-ivory/80 leading-relaxed italic mb-6">
-                {testimonial.quote}
-              </p>
-
-              {/* Author */}
-              <div className="pt-5 border-t border-stone-100 dark:border-stone-800">
-                <p className="font-sans text-sm font-medium text-charcoal dark:text-ivory">
-                  {testimonial.name}
-                </p>
-                <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 mt-0.5">
-                  {testimonial.location}
-                </p>
-                {testimonial.property && (
-                  <p className="text-[10px] font-sans font-medium tracking-[0.1em] uppercase text-gold-600 dark:text-gold-400 mt-2">
-                    {testimonial.property}
-                  </p>
+        <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {visible.map((testimonial, idx) => (
+              <div
+                key={`${testimonial.id}-${idx}`}
+                className={cn(
+                  "bg-white dark:bg-[#121212] rounded-2xl p-6 md:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border transition-all duration-500",
+                  idx === 0
+                    ? "border-gold-500/40"
+                    : "border-transparent md:opacity-90",
+                  idx > 0 && "hidden md:block"
                 )}
+              >
+                <p className="font-serif text-5xl leading-none text-gold-500 mb-2">&ldquo;</p>
+                <p className="font-sans text-[15px] text-charcoal/80 dark:text-ivory/80 leading-relaxed mb-6 min-h-[96px]">
+                  {testimonial.quote}
+                </p>
+
+                <div className="flex items-center gap-3 pt-5 border-t border-stone-100 dark:border-stone-800">
+                  <span className="flex-none w-11 h-11 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-700 dark:text-gold-300 flex items-center justify-center font-serif text-sm">
+                    {initials(testimonial.name)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-sans text-sm font-semibold text-charcoal dark:text-ivory truncate">
+                      {testimonial.name}
+                    </p>
+                    <p className="text-xs font-sans text-charcoal/50 dark:text-ivory/50 truncate">
+                      {[testimonial.property, testimonial.location].filter(Boolean).join(" • ")}
+                    </p>
+                    <div className="flex items-center gap-0.5 mt-1">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-gold-500 text-gold-500" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Navigation */}
         <div className="flex items-center justify-center gap-4 mt-10">
           <button
             onClick={prev}
-            className="w-10 h-10 flex items-center justify-center border border-stone-300 dark:border-stone-700 text-charcoal/60 dark:text-ivory/60 hover:border-gold-500 hover:text-gold-600 dark:hover:text-gold-400 transition-all duration-200"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[#1a1a1a] shadow border border-stone-200 dark:border-stone-700 text-charcoal/70 dark:text-ivory/70 hover:text-gold-600 transition-colors"
             aria-label="Previous"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -95,10 +98,8 @@ export function Testimonials() {
                 key={idx}
                 onClick={() => setCurrent(idx)}
                 className={cn(
-                  "transition-all duration-300",
-                  idx === current
-                    ? "w-6 h-1 bg-gold-500"
-                    : "w-2 h-1 bg-stone-300 dark:bg-stone-700 hover:bg-stone-400"
+                  "rounded-full transition-all duration-300 h-2",
+                  idx === current ? "w-6 bg-gold-500" : "w-2 bg-stone-300 dark:bg-stone-700 hover:bg-stone-400"
                 )}
                 aria-label={`Go to testimonial ${idx + 1}`}
               />
@@ -107,7 +108,7 @@ export function Testimonials() {
 
           <button
             onClick={next}
-            className="w-10 h-10 flex items-center justify-center border border-stone-300 dark:border-stone-700 text-charcoal/60 dark:text-ivory/60 hover:border-gold-500 hover:text-gold-600 dark:hover:text-gold-400 transition-all duration-200"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-gold-500 text-white shadow hover:bg-gold-600 transition-colors"
             aria-label="Next"
           >
             <ChevronRight className="w-4 h-4" />

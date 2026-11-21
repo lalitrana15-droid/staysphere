@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,10 @@ const schema = z.object({
   enquiry_type: z.string().min(1, "Please select an enquiry type"),
   destination: z.string().optional(),
   message: z.string().min(10, "Please tell us a bit more"),
+  agent_code: z
+    .string()
+    .regex(/^[A-Za-z0-9_-]{0,32}$/, "Letters, numbers, - and _ only")
+    .optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -22,14 +26,24 @@ type FormData = z.infer<typeof schema>;
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showAgent, setShowAgent] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  useEffect(() => {
+    const ref = getReferralCode();
+    if (ref) {
+      setValue("agent_code", ref);
+      setShowAgent(true);
+    }
+  }, [setValue]);
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -37,7 +51,7 @@ export function ContactForm() {
       await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, source: "contact", ref_agent_code: getReferralCode() }),
+        body: JSON.stringify({ ...data, source: "contact", ref_agent_code: data.agent_code?.trim() || getReferralCode() }),
       });
       setSubmitted(true);
     } catch {
@@ -72,6 +86,9 @@ export function ContactForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <p className="text-[10px] font-sans font-semibold tracking-[0.15em] uppercase text-charcoal/50 dark:text-ivory/50">
+          Your details
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <input
@@ -152,6 +169,28 @@ export function ContactForm() {
           )}
         </div>
 
+        {showAgent ? (
+          <div>
+            <input
+              {...register("agent_code")}
+              placeholder="Agent code"
+              autoCapitalize="characters"
+              className={cn("input-luxury", errors.agent_code && "border-red-400")}
+            />
+            {errors.agent_code && (
+              <p className="text-xs text-red-400 mt-1">{errors.agent_code.message}</p>
+            )}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowAgent(true)}
+            className="text-xs font-sans text-gold-600 dark:text-gold-400 underline underline-offset-4"
+          >
+            Have an agent code?
+          </button>
+        )}
+
         <button
           type="submit"
           disabled={loading}
@@ -163,6 +202,9 @@ export function ContactForm() {
             "Send Message"
           )}
         </button>
+        <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 text-center">
+          Our specialist responds within 2 hours
+        </p>
       </form>
     </div>
   );

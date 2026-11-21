@@ -92,6 +92,7 @@ export default async function ExperiencePage({ params }: Props) {
               <BookingEnquiryForm
                 propertyTitle={experience.title}
                 propertySlug={experience.slug}
+                enquiryHeading="Enquire About This Experience"
               />
             </div>
           </div>

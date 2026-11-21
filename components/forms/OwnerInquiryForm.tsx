@@ -154,6 +154,9 @@ export function OwnerInquiryForm() {
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Inquiry"}
         </button>
+        <p className="text-[10px] font-sans text-charcoal/40 dark:text-ivory/40 text-center">
+          Our partnerships team responds within 24 hours
+        </p>
       </form>
     </div>
   );

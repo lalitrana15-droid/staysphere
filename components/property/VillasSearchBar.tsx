@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { MapPin, ChevronDown, Calendar, Users, Search } from "lucide-react";
 
 interface Destination {
@@ -26,6 +26,7 @@ export function VillasSearchBar({
   currentCheckout,
 }: Props) {
   const router = useRouter();
+  const sp = useSearchParams();
   const [selectedCity, setSelectedCity] = useState(currentCity);
   const [guests, setGuests] = useState(currentGuests);
   const [checkin, setCheckin] = useState(currentCheckin);
@@ -59,7 +60,9 @@ export function VillasSearchBar({
   const today = new Date().toISOString().split("T")[0];
 
   function applySearch() {
-    const params = new URLSearchParams();
+    // keep sidebar filters (beds, amenities, types, sort, view); search fields replace the rest
+    const params = new URLSearchParams(sp.toString());
+    ["city", "checkin", "checkout", "guests", "page"].forEach((k) => params.delete(k));
     if (selectedCity) params.set("city", selectedCity);
     if (checkin) params.set("checkin", checkin);
     if (checkout) params.set("checkout", checkout);
@@ -78,7 +81,7 @@ export function VillasSearchBar({
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-stretch md:items-center border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#181818] shadow-sm">
+    <div className="flex flex-col md:flex-row items-stretch md:items-center rounded-2xl border border-stone-200/70 dark:border-stone-700 bg-white dark:bg-[#181818] shadow-[0_10px_30px_rgba(0,0,0,0.06)] md:pr-2">
       {/* Destination */}
       <div
         ref={destRef}
@@ -237,11 +240,11 @@ export function VillasSearchBar({
       {/* Search Button */}
       <button
         onClick={applySearch}
-        className="flex items-center justify-center gap-2 px-8 py-4 bg-gold-500 hover:bg-gold-600 text-white transition-colors duration-200"
+        className="flex items-center justify-center gap-2 m-2 md:m-0 px-7 py-3.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-white transition-colors duration-200"
       >
         <Search className="w-4 h-4" />
-        <span className="text-[11px] font-sans font-semibold tracking-[0.15em] uppercase">
-          Search
+        <span className="text-sm font-sans font-medium">
+          Search Villas
         </span>
       </button>
 

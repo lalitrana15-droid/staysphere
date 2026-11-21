@@ -5,6 +5,7 @@
 
 const BASE = "https://sandbox.elivaas.com";
 const PAGE_SIZE = 100;
+const PLACEHOLDER_PRICE = 79152;
 
 // All Elivaas state slugs
 const ALL_STATE_SLUGS = [
@@ -82,7 +83,8 @@ async function fetchStateRates(
       item._checkin = checkin;
       item._checkout = checkout;
       const ppn = perNightPrice(item);
-      if (ppn) prices[id] = ppn;
+      // 79152 is a sandbox placeholder shared by most properties — treat as "Price on Request"
+      if (ppn && ppn !== PLACEHOLDER_PRICE) prices[id] = ppn;
     }
     page++;
   }
