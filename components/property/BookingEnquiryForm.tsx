@@ -29,6 +29,7 @@ interface BookingEnquiryFormProps {
   propertySlug: string;
   enableBooking?: boolean;
   enquiryHeading?: string;
+  bare?: boolean;
 }
 
 interface Quote {
@@ -66,7 +67,7 @@ const labelCls =
 const cellInput =
   "w-full bg-transparent text-sm font-sans text-charcoal dark:text-ivory outline-none placeholder:text-charcoal/30 dark:placeholder:text-ivory/30";
 
-export function BookingEnquiryForm({ propertyTitle, propertySlug, enableBooking = false, enquiryHeading = "Enquire About This Property" }: BookingEnquiryFormProps) {
+export function BookingEnquiryForm({ propertyTitle, propertySlug, enableBooking = false, enquiryHeading = "Enquire About This Property", bare = false }: BookingEnquiryFormProps) {
   const [step, setStep] = useState<"form" | "confirm" | "done">("form");
   const [doneMsg, setDoneMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -239,7 +240,9 @@ export function BookingEnquiryForm({ propertyTitle, propertySlug, enableBooking 
     }
   };
 
-  const card = "bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 p-6 sm:p-8";
+  const card = bare
+    ? ""
+    : "bg-white dark:bg-[#121212] border border-stone-200/60 dark:border-stone-800/60 p-6 sm:p-8";
 
   // ---------- Done ----------
   if (step === "done") {
@@ -333,7 +336,7 @@ export function BookingEnquiryForm({ propertyTitle, propertySlug, enableBooking 
 
   return (
     <div className={card}>
-      <div className="mb-6">
+      <div className={bare ? "hidden" : "mb-6"}>
         <p className="label-text mb-2">{enableBooking ? "Reserve Your Stay" : "Get In Touch"}</p>
         <h3 className="font-serif text-2xl font-light text-charcoal dark:text-ivory">
           {enableBooking ? "Book This Property" : enquiryHeading}
