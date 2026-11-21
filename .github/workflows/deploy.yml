@@ -19,12 +19,16 @@ jobs:
 
       - name: Sync files to VPS
         run: |
+          # --delete removes anything not in the repo, so protect server-only files:
+          # secrets (.env*) and photos stored only on the VPS (public/photoshoots)
           rsync -az --delete \
             --exclude node_modules \
             --exclude .next \
             --exclude .git \
+            --exclude '.env*' \
+            --exclude public/photoshoots \
             ./ root@200.141.2.70:/var/www/staysphere.imagesque.com/
 
       - name: Build and restart
         run: |
-          ssh root@200.141.2.70 "cd /var/www/staysphere.imagesque.com && npm install --production=false && npm run build && pm2 restart staysphere --update-env"
+          ssh root@200.141.2.70 "cd /var/www/staysphere.imagesque.com && test -f .env.local || { echo '.env.local missing on VPS - aborting'; exit 1; } && npm install --production=false && rm -rf .next && npm run build && pm2 restart staysphere --update-env"
