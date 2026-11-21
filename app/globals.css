@@ -62,7 +62,7 @@
 
 @layer components {
   .luxury-container {
-    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+    @apply max-w-[1760px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20;
   }
 
   .section-padding {

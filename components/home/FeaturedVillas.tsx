@@ -46,7 +46,7 @@ export function FeaturedVillas() {
   const villas = pickVillas();
 
   return (
-    <section className="py-16 md:py-24 bg-ivory dark:bg-[#0A0A0A]">
+    <section className="pt-12 md:pt-28 pb-16 md:pb-24 bg-ivory dark:bg-[#0A0A0A]">
       <div className="luxury-container">
         <div className="flex items-end justify-between gap-6 mb-8 md:mb-10">
           <div>

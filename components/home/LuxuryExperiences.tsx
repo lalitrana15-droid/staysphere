@@ -10,8 +10,8 @@ const ICONS: Record<string, LucideIcon> = {
   wellness: Flower2,
 };
 
-const BG_IMAGE =
-  "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1920&q=80";
+// Real photo of one of our villas (served from our own image CDN)
+const BG_IMAGE = "https://img.staysvacation.com/1_H7_A6784_HDR_a4c3156666.webp?w=1920";
 
 export function LuxuryExperiences() {
   const experiences = getFeaturedExperiences();

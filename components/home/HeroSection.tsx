@@ -7,14 +7,7 @@ import Link from "next/link";
 import { Search, MapPin, ChevronDown, Calendar, Users, Gem, CalendarCheck, Headset, ArrowRight, Play } from "lucide-react";
 import { destinations } from "@/data/destinations";
 
-const heroImages = [
-  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=90",
-  "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=90",
-  "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=90",
-  "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=1920&q=90",
-];
-
-export function HeroSection() {
+export function HeroSection({ heroImages }: { heroImages: string[] }) {
   const router = useRouter();
   const [currentImage, setCurrentImage] = useState(0);
   const [destination, setDestination] = useState("");
@@ -49,8 +42,9 @@ export function HeroSection() {
     "w-full bg-transparent text-white text-sm font-sans focus:outline-none cursor-pointer appearance-none";
 
   return (
-    <section className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden">
-      {/* Background Images */}
+    <section className="relative pb-8 md:pb-0 md:h-[620px] lg:h-[640px]">
+      {/* Background (clipped so the search bar can overlap the hero's bottom edge) */}
+      <div className="absolute inset-0 overflow-hidden">
       {heroImages.map((img, idx) => (
         <div
           key={img}
@@ -71,27 +65,28 @@ export function HeroSection() {
 
       {/* Overlays: dark on the left for text, warm fade at the bottom */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-black/5" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+      </div>
 
-      <div className="relative z-10 w-full luxury-container pt-36 pb-10 md:pb-14 text-white">
+      <div className="relative z-10 w-full luxury-container pt-28 md:pt-32 pb-8 md:pb-0 text-white">
         {/* Text block */}
-        <div className="max-w-2xl mb-10 md:mb-14">
-          <p className="text-[11px] md:text-xs font-sans font-semibold tracking-[0.25em] uppercase text-gold-300 mb-5 animate-fade-in">
+        <div className="max-w-2xl">
+          <p className="text-[11px] md:text-xs font-sans font-semibold tracking-[0.25em] uppercase text-gold-300 mb-4 animate-fade-in">
             Private Villas · Curated Stays · India &amp; Beyond
           </p>
 
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] mb-6 animate-slide-up">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.1] mb-4 animate-slide-up">
             Luxury Villas for
             <br />
             Extraordinary Stays
           </h1>
 
-          <p className="font-sans text-base md:text-lg font-light text-white/85 max-w-md leading-relaxed mb-8">
+          <p className="font-sans text-base font-light text-white/85 max-w-md leading-relaxed mb-5">
             Handpicked private villas, nature retreats and heritage homes for families, friends and special getaways.
           </p>
 
           {/* Trust points */}
-          <div className="flex items-center gap-0 mb-9">
+          <div className="flex items-center gap-0 mb-6">
             {[
               { icon: Gem, label: "Verified Villas" },
               { icon: CalendarCheck, label: "Best Rates" },
@@ -127,7 +122,10 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Search bar */}
+      </div>
+
+      {/* Search bar — straddles the bottom edge of the hero on desktop */}
+      <div className="relative z-20 luxury-container md:absolute md:inset-x-0 md:bottom-0 md:translate-y-1/2">
         <div className="bg-black/55 backdrop-blur-xl border border-white/15 rounded-2xl md:rounded-full overflow-hidden shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-stretch">
             <div className={`${fieldCls} md:flex-[1.3] md:pl-8`}>
@@ -209,19 +207,6 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Image dots */}
-        <div className="flex items-center gap-2 mt-8">
-          {heroImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentImage(idx)}
-              className={`transition-all duration-300 h-1 ${
-                idx === currentImage ? "w-8 bg-gold-300" : "w-2 bg-white/40 hover:bg-white/60"
-              }`}
-              aria-label={`Image ${idx + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );

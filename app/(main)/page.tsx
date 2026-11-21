@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { getPropertyBySlug } from "@/data/properties";
+import { filterPropertyImages } from "@/lib/image-utils";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturedVillas } from "@/components/home/FeaturedVillas";
 import { FeaturedDestinations } from "@/components/home/FeaturedDestinations";
@@ -13,10 +15,26 @@ export const metadata: Metadata = {
     "Discover curated luxury villas, retreats and private homes across India, Dubai, Bali and beyond. The world's most curated luxury stay marketplace.",
 };
 
+// Hero uses real photos of our own listed villas (no stock / AI images)
+const HERO_VILLA_SLUGS = [
+  "amber-royale-3bhk-villa-with-private-pool",
+  "aarul-farm-4bhk-farmhouse-with-private-pool",
+  "cabanas-retreat-5bhk-villa-with-private-pool-in-alibaug",
+  "the-pine-melody-4bhk-villa-with-pool-in-kasauli",
+];
+
+function heroImages(): string[] {
+  const imgs = HERO_VILLA_SLUGS.map((slug) => {
+    const p = getPropertyBySlug(slug);
+    return p ? filterPropertyImages(p.images)[0] : undefined;
+  }).filter((u): u is string => !!u && u.startsWith("https://"));
+  return imgs.map((u) => `${u}?w=1920`);
+}
+
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
+      <HeroSection heroImages={heroImages()} />
       <FeaturedVillas />
       <FeaturedDestinations />
       <LuxuryExperiences />
