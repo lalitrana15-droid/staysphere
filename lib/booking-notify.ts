@@ -5,13 +5,15 @@ export async function recordBooking(d: {
   name: string; email: string; phone: string; property: string;
   check_in?: string; check_out?: string; guests?: string;
   agent_code?: string | null; source: string; message: string;
+  /** Internal only — saved on the lead and shown to the team, never to the guest */
+  internalNote?: string; alertPrefix?: string;
 }) {
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL !== "your_supabase_project_url") {
     try {
       const { createClient } = await import("@/lib/supabase/server");
       const supabase = await createClient();
       const { error } = await supabase.from("leads").insert([{
-        name: d.name, email: d.email, phone: d.phone, message: d.message,
+        name: d.name, email: d.email, phone: d.phone, message: d.internalNote ? `${d.message} | ${d.internalNote}` : d.message,
         property_id: d.property, check_in: d.check_in || null, check_out: d.check_out || null,
         guests: d.guests ? parseInt(d.guests) : null, source: d.source,
         ref_agent_code: d.agent_code || null,
@@ -23,14 +25,14 @@ export async function recordBooking(d: {
   const rows = [
     ["Property", d.property], ["Check-in", d.check_in], ["Check-out", d.check_out],
     ["Guests", d.guests], ["Name", d.name], ["Phone", d.phone], ["Email", d.email],
-    ["Agent", d.agent_code], ["Details", d.message],
+    ["Agent", d.agent_code], ["Details", d.message], ["Supplier booking", d.internalNote],
   ].filter(([, v]) => v).map(([k, v]) => `<p style="margin:4px 0"><b>${k}:</b> ${escapeHtml(String(v))}</p>`);
 
   // 1. Alert to our team
   await sendMail({
     to: process.env.ENQUIRY_EMAIL || MAIL_FROM_ADDRESS,
     replyTo: d.email,
-    subject: `${paid ? "PAID Booking" : "Booking Request"} — ${d.property}${d.agent_code ? ` [${d.agent_code}]` : ""}`,
+    subject: `${d.alertPrefix ?? ""}${paid ? "PAID Booking" : "Booking Request"} — ${d.property}${d.agent_code ? ` [${d.agent_code}]` : ""}`,
     html: `<div style="font-family:sans-serif;font-size:15px;line-height:1.7;color:#222">${rows.join("")}</div>`,
   });
 
