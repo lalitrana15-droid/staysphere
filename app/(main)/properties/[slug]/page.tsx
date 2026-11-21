@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, BedDouble, Bath, Users, Waves, ChevronRight, ExternalLink, FileText, IndianRupee, PawPrint, Leaf, Wifi, Utensils, Mountain, Car, Sparkles, ShieldCheck, Headset, type LucideIcon } from "lucide-react";
+import { MapPin, BedDouble, Bath, Users, Waves, ChevronRight, ExternalLink, IndianRupee, PawPrint, Leaf, Wifi, Utensils, Mountain, Car, Sparkles, ShieldCheck, Headset, type LucideIcon } from "lucide-react";
 import { properties, getPropertyBySlug, getRelatedProperties } from "@/data/properties";
 import { getDestinationBySlug } from "@/data/destinations";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
 import { ReadMore } from "@/components/property/ReadMore";
 import { AmenitiesGrid } from "@/components/property/AmenitiesGrid";
 import { BookingEnquiryForm } from "@/components/property/BookingEnquiryForm";
-import { PropertyShareWhatsAppButton, PropertyEnquireWhatsAppButton } from "@/components/property/PropertyWhatsAppButtons";
 import { fetchLivePrices } from "@/lib/elivaas-rates";
 import { filterPropertyImages, sizedImage } from "@/lib/image-utils";
 
@@ -361,10 +360,6 @@ export default async function PropertyPage({ params, searchParams }: Props) {
 
                   <BookingEnquiryForm propertyTitle={property.title} propertySlug={property.slug} enableBooking bare />
 
-                  <div className="mt-4">
-                    <PropertyEnquireWhatsAppButton propertyTitle={property.title} />
-                  </div>
-
                   <ul className="mt-6 pt-5 border-t border-stone-200/70 dark:border-stone-800 space-y-4">
                     <li className="flex items-start gap-3">
                       <ShieldCheck className="w-5 h-5 text-gold-600 flex-none mt-0.5" strokeWidth={1.5} />
@@ -381,19 +376,6 @@ export default async function PropertyPage({ params, searchParams }: Props) {
                       </div>
                     </li>
                   </ul>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <PropertyShareWhatsAppButton propertyTitle={property.title} propertySlug={property.slug} />
-                  <a
-                    href={property.brochure_url ?? `/properties/${property.slug}/brochure`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2.5 px-5 py-3 rounded-lg border border-stone-300 dark:border-stone-700 text-xs font-sans font-medium tracking-widest uppercase text-charcoal/70 dark:text-ivory/70 hover:border-gold-500 hover:text-gold-600 transition-colors"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    Download Property PDF
-                  </a>
                 </div>
               </div>
             </aside>

@@ -41,7 +41,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="section-padding bg-white dark:bg-[#0D0D0D]">
+    <section id="faq" className="section-padding bg-white dark:bg-[#0D0D0D] scroll-mt-20">
       <div className="luxury-container">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
